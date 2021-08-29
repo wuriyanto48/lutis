@@ -2,17 +2,26 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'pp.jpg';
+let filePath = 'elasticsearch_logo.png';
 
 fs.readFile(filePath, null, (err, data) => {
     if (err) {
         console.log(err);
     } else {
-        // console.log(Buffer.isBuffer(data));
-        const array = new Uint8Array(data);
-        // console.log(array);
 
-        lutis.readFile(data);
+        let inData = new Uint8Array(data);
+
+        let res = lutis.gaussianBlur('.png', data);
+        console.log(data.slice(0, 10));
+        console.log(res.slice(0, 10));
+
+        // fs.writeFile('out.jpg', res, 'binary', (err) => {
+        //     if (err) {
+        //         console.log(err);
+        //     }
+        // });
+
+        fs.createWriteStream('out.png').write(res);
     }
 });
 
