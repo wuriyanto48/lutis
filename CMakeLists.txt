@@ -7,6 +7,8 @@ include_directories(${CMAKE_JS_INC})
 
 set(HEADER_FILES
     plugin/Type.h
+    plugin/Draw.h
+    plugin/Filter.h
     plugin/Core.h
 )
 
