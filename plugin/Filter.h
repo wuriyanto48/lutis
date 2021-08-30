@@ -17,7 +17,7 @@ namespace lutis
     {
         static const int MAX_KERNEL_LENGTH = 31;
 
-        int GaussianBlur(const std::string& format, 
+        static int GaussianBlur(const std::string& format, 
             const Napi::Buffer<lutis::type::Byte>& data, std::vector<lutis::type::Byte>& out)
         {
             printf("performing GaussianBlur\n");

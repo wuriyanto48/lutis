@@ -31,7 +31,7 @@ namespace lutis
             return 0;
         }
 
-        int Inspect(const Napi::Buffer<lutis::type::Byte>& data, lutis::type::InspectData& inspectDataOut)
+        static int Inspect(const Napi::Buffer<lutis::type::Byte>& data, lutis::type::InspectData& inspectDataOut)
         {
             cv::Mat decodedMat;
             int decodeResult = DecodeFromBuffer(data, decodedMat);
