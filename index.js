@@ -11,19 +11,36 @@ fs.readFile(filePath, null, (err, data) => {
 
         let inData = new Uint8Array(data);
 
-        let res = lutis.gaussianBlur('.png', data);
-        console.log(data.slice(0, 10));
-        console.log(res.slice(0, 10));
+        // lutis.gaussianBlur('.png', data, (err, res) => {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         console.log(data.slice(0, 10));
+        //         console.log(res.slice(0, 10));
+        //         fs.writeFile('out.png', res, 'binary', (err) => {
+        //             if (err) {
+        //                 console.log(err);
+        //             }
+        //         });
+        //     }
+            
+        // });
 
-        // let res = lutis.inspect(data);
-
-        // let res = lutis.drawCircle('.png', 400, 400, 90);
-
-        fs.writeFile('out.png', res, 'binary', (err) => {
+        lutis.drawCircle('.png', 400, 400, 90, {R:245, G:245, B:73}, (err, res) => {
             if (err) {
                 console.log(err);
+            } else {
+                console.log(res.slice(0, 10));
+                fs.writeFile('out.png', res, 'binary', (err) => {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
             }
+            
         });
+
+        // let res = lutis.inspect(data);
 
         // fs.createWriteStream('out.png').write(res);
         
