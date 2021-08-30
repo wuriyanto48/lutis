@@ -1,6 +1,7 @@
 #include <napi.h>
 #include <stdio.h>
 #include <vector>
+#include <Magick++.h>
 #include "Core.h"
 #include "Draw.h"
 #include "Type.h"
@@ -8,6 +9,33 @@
 
 namespace lutis
 {
+    static Napi::Value DrawMagick(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+        Magick::Image image( Magick::Geometry(300,200), Magick::Color("white") );
+
+        // Set draw options 
+        image.strokeColor("red"); // Outline color 
+        image.fillColor("green"); // Fill color 
+        image.strokeWidth(5);
+
+        // Draw a circle 
+        image.draw( Magick::DrawableCircle(100,100, 50,100) );
+
+        // Draw a rectangle 
+        image.draw( Magick::DrawableRectangle(200,200, 270,170) );
+
+        Magick::Blob blob;
+        image.magick("JPEG");
+        image.write(&blob);
+        
+        printf("blob length : %lu\n", blob.length());
+
+        lutis::type::Byte datas[blob.length()];
+        memcpy(datas, blob.data(), blob.length());
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
+    }
 
     static Napi::Value Inspect(const Napi::CallbackInfo& info)
     {
@@ -171,6 +199,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "inspect"), Napi::Function::New(env, Inspect));
         exports.Set(Napi::String::New(env, "gaussianBlur"), Napi::Function::New(env, GaussianBlur));
         exports.Set(Napi::String::New(env, "drawCircle"), Napi::Function::New(env, DrawCircle));
+        exports.Set(Napi::String::New(env, "drawMagick"), Napi::Function::New(env, DrawMagick));
         return exports;
     }
 
