@@ -5,6 +5,8 @@ build/
 .vscode/
 
 *.jpg
+*.jpeg
+*.py
 *.png
 *.txt
 
