@@ -26,9 +26,21 @@ namespace lutis
         }
 
         Napi::Buffer<lutis::type::Byte> buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
-        lutis::core::Inspect(buf);
 
-        return info.Env().Undefined();
+        lutis::type::InspectData inspectData;
+        int inspectResult = lutis::core::Inspect(buf, inspectData);
+        if (inspectResult != 0)
+        {
+            Napi::TypeError::New(env, "error inspecting data").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Napi::Object inspectObject = Napi::Object::New(env);
+        inspectObject.Set("sizeKB", inspectData.sizeKB);
+        inspectObject.Set("colorChannelSize", inspectData.colorChannelSize);
+        inspectObject.Set("totalArrayElement", inspectData.totalArrayElement);
+
+        return inspectObject;
     }
 
     static void GaussianBlur(const Napi::CallbackInfo& info)

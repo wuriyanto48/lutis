@@ -30,17 +30,16 @@ namespace lutis
             return 0;
         }
 
-        int Inspect(const Napi::Buffer<lutis::type::Byte>& data)
+        int Inspect(const Napi::Buffer<lutis::type::Byte>& data, lutis::type::InspectData& inspectDataOut)
         {
-            printf("Size in Bytes: %lu\n", data.Length());
-
             cv::Mat decodedMat;
             int decodeResult = DecodeFromBuffer(data, decodedMat);
             if (decodeResult != 0)
                 return 1;
 
-            printf("total(): %lu\n", decodedMat.total());
-            printf("elemSize(): %lu\n", decodedMat.elemSize());
+            inspectDataOut.sizeKB = data.Length() / 1000;
+            inspectDataOut.colorChannelSize = decodedMat.elemSize();
+            inspectDataOut.totalArrayElement = decodedMat.total();
             return 0;
         }
 

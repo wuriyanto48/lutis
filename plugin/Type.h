@@ -12,6 +12,12 @@ namespace lutis
             double G;
             double B;
         } c_rgb;
+
+        struct InspectData {
+            size_t sizeKB;
+            size_t colorChannelSize;
+            size_t totalArrayElement;
+        };
     }
 }
 
