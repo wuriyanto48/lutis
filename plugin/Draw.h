@@ -13,7 +13,7 @@ namespace lutis
 {
     namespace draw 
     {
-        static int DrawElipse(const std::string& format, 
+        static int DrawElipse(const std::string& format, const lutis::type::Color& color, 
             int w, int h, double angle, std::vector<lutis::type::Byte>& out)
         {
             int thickness = 2;
@@ -26,7 +26,7 @@ namespace lutis
                 angle,
                 0,
                 360,
-                cv::Scalar( 130, 24, 242 ),
+                cv::Scalar( color.B, color.G, color.R ),
                 thickness,
                 lineType );
 

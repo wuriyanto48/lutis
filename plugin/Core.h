@@ -30,6 +30,20 @@ namespace lutis
             return 0;
         }
 
+        int Inspect(const Napi::Buffer<lutis::type::Byte>& data)
+        {
+            printf("Size in Bytes: %lu\n", data.Length());
+
+            cv::Mat decodedMat;
+            int decodeResult = DecodeFromBuffer(data, decodedMat);
+            if (decodeResult != 0)
+                return 1;
+
+            printf("total(): %lu\n", decodedMat.total());
+            printf("elemSize(): %lu\n", decodedMat.elemSize());
+            return 0;
+        }
+
         void CleanUp(lutis::type::Byte** out)
         {
             lutis::type::Byte* imBytes = *out;
