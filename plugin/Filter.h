@@ -32,11 +32,6 @@ namespace lutis
                 cv::GaussianBlur(decodedMat, dst, cv::Size( i, i ), 0, 0 );
             
             // cv::imwrite("dst.jpg", dst);
-            printf("size dst.data %lu\n", sizeof(dst.data));
-
-            for (size_t index = 0; index < data.Length(); index++) {
-                printf("array[%lu] = %d\n", index, dst.data[index]);
-            }
 
             // int size = dst.total() * dst.elemSize();
             // *out = new lutis::type::Byte[size];

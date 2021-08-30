@@ -16,17 +16,18 @@ namespace lutis
     {
         static int DecodeFromBuffer(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
         {
-            lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
+            const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
 
-            lutis::type::Byte datas[data.Length()];
-            for (size_t index = 0; index < data.Length(); index++) 
-            {
-                datas[index] = arrs[index];
-            }
+            size_t length = data.Length();
+
+            lutis::type::Byte* datas = new lutis::type::Byte[length];
+            memcpy(datas, arrs, length);
 
             // decode from buffer to Mat
-            cv::Mat rawImage(1, sizeof(datas), CV_8UC1, (void*)datas);
+            cv::Mat rawImage(1, length, CV_8UC1, (void*)datas);
             dest = cv::imdecode(rawImage, cv::IMREAD_COLOR|cv::IMREAD_ANYDEPTH);
+
+            delete[] datas;
             return 0;
         }
 
