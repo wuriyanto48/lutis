@@ -9,6 +9,127 @@
 
 namespace lutis
 {
+    static Napi::Value RotateMagick(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 2)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsNumber())
+        {
+            Napi::TypeError::New(env, "first argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsBuffer())
+        {
+            Napi::TypeError::New(env, "second argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        double angle = info[0].As<Napi::Number>().DoubleValue();
+        Napi::Buffer<lutis::type::Byte> buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
+
+        Magick::Image image;
+
+        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        if (decodeRes != 0) {
+            Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        // operations
+        try 
+        {
+            image.rotate(angle);
+        } catch(Magick::Error& err)
+        {
+            Napi::TypeError::New(env, "error rotate buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Magick::Blob blobOut;
+        image.magick("PNG");
+        image.write(&blobOut);
+
+        lutis::type::Byte datas[blobOut.length()];
+        memcpy(datas, blobOut.data(), blobOut.length());
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
+    }
+
+    static Napi::Value ResizeMagick(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 4)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsNumber())
+        {
+            Napi::TypeError::New(env, "first argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsNumber())
+        {
+            Napi::TypeError::New(env, "second argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[2].IsNumber())
+        {
+            Napi::TypeError::New(env, "third argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[3].IsBuffer())
+        {
+            Napi::TypeError::New(env, "fourth argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        double height = info[0].As<Napi::Number>().DoubleValue();
+        double width = info[1].As<Napi::Number>().DoubleValue();
+        double factor = info[2].As<Napi::Number>().DoubleValue();
+        Napi::Buffer<lutis::type::Byte> buf = info[3].As<Napi::Buffer<lutis::type::Byte>>();
+
+        Magick::Image image;
+
+        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        if (decodeRes != 0) {
+            Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        // operations
+        try 
+        {
+            Magick::Geometry size = Magick::Geometry(height*factor, width*factor);
+            image.zoom(size);
+        } catch(Magick::Error& err)
+        {
+            Napi::TypeError::New(env, "error resize buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Magick::Blob blobOut;
+        image.magick("PNG");
+        image.write(&blobOut);
+
+        lutis::type::Byte datas[blobOut.length()];
+        memcpy(datas, blobOut.data(), blobOut.length());
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
+    }
+
     static Napi::Value DrawMagick(const Napi::CallbackInfo& info)
     {
         Napi::Env env = info.Env();
@@ -200,6 +321,8 @@ namespace lutis
         exports.Set(Napi::String::New(env, "gaussianBlur"), Napi::Function::New(env, GaussianBlur));
         exports.Set(Napi::String::New(env, "drawCircle"), Napi::Function::New(env, DrawCircle));
         exports.Set(Napi::String::New(env, "drawMagick"), Napi::Function::New(env, DrawMagick));
+        exports.Set(Napi::String::New(env, "rotateMagick"), Napi::Function::New(env, RotateMagick));
+        exports.Set(Napi::String::New(env, "resizeMagick"), Napi::Function::New(env, ResizeMagick));
         return exports;
     }
 

@@ -22,7 +22,7 @@ namespace lutis
         {
             printf("performing GaussianBlur\n");
             cv::Mat decodedMat;
-            int decodeResult = lutis::core::DecodeFromBuffer(data, decodedMat);
+            int decodeResult = lutis::core::DecodeFromBufferToCvMat(data, decodedMat);
             if (decodeResult != 0)
                 return 1;
             

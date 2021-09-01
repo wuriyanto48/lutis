@@ -9,12 +9,13 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include <Magick++.h>
 
 namespace lutis 
 {
     namespace core 
     {
-        static int DecodeFromBuffer(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
+        static int DecodeFromBufferToCvMat(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
         {
             const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
 
@@ -31,10 +32,33 @@ namespace lutis
             return 0;
         }
 
+        static int DecodeFromBufferToMagickImage(const Napi::Buffer<lutis::type::Byte>& data, Magick::Image& dest)
+        {
+            const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
+
+            size_t length = data.Length();
+
+            lutis::type::Byte* datas = new lutis::type::Byte[length];
+            memcpy(datas, arrs, length);
+
+            // decode from buffer to Magick Image
+            Magick::Blob blobIn(datas, length);
+            try 
+            {
+                dest.read(blobIn);
+            } catch(Magick::Error& err)
+            {
+                return 1;
+            }
+
+            delete[] datas;
+            return 0;
+        }
+
         static int Inspect(const Napi::Buffer<lutis::type::Byte>& data, lutis::type::InspectData& inspectDataOut)
         {
             cv::Mat decodedMat;
-            int decodeResult = DecodeFromBuffer(data, decodedMat);
+            int decodeResult = DecodeFromBufferToCvMat(data, decodedMat);
             if (decodeResult != 0)
                 return 1;
 
