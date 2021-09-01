@@ -11,3 +11,6 @@ An Experimental `OpenCV` binding with `Nodejs`
 ### Building
 
 - You need to build the `OpenCV` first, please open `build_opencv.md`
+
+### TODO
+- fixing `webp`
