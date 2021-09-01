@@ -16,8 +16,19 @@ set(SOURCE_FILES
     plugin/Lutis.cc
 )
 
+MESSAGE( [Main] "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
+
+# -------------------- WebP --------------------
+
+# set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/webp/lib/pkgconfig")
+# set(WebP_DIR ${PROJECT_SOURCE_DIR}/vendor/webp/libwebp-1.2.1)
+# set(WebP_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/webp/include/webp)
+# set(WebP_LIBRARIES ${PROJECT_SOURCE_DIR}/vendor/webp/lib)
+
+# find_package(WebP CONFIG REQUIRED)
+
 # -------------------- Image Magick --------------------
-set(ENV{PKG_CONFIG_PATH} ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib/pkgconfig)
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/image_magick/lib/pkgconfig")
 set(ImageMagick_EXECUTABLE_DIR ${PROJECT_SOURCE_DIR}/vendor/image_magick/bin)
 set(ImageMagick_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/image_magick/include/ImageMagick-7)
 set(ImageMagick_LIBRARIES ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib)
@@ -25,7 +36,7 @@ set(ImageMagick_LIBRARIES ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib)
 add_definitions( -DMAGICKCORE_QUANTUM_DEPTH=16 )
 add_definitions( -DMAGICKCORE_HDRI_ENABLE=0 )
 
-find_package(ImageMagick COMPONENTS convert Magick++ MagickCore)
+find_package(ImageMagick REQUIRED COMPONENTS convert Magick++ MagickCore)
 
 # find_program(MAGICK_CONFIG "${ImageMagick_EXECUTABLE_DIR}/Magick++-config")
 
@@ -54,11 +65,13 @@ set(CMAKE_CXX_STANDARD 14)
 find_package( OpenCV REQUIRED )
 
 # tell the build to include the headers from OpenCV
+# include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS} ${WebP_INCLUDE_DIRS})
 include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
+# target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} ${ImageMagick_LIBRARIES} ${WebP_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} ${ImageMagick_LIBRARIES})
 
 # Include Node-API wrappers
@@ -77,6 +90,7 @@ MESSAGE( [Main] " ImageMagick_INCLUDE_DIRS = ${ImageMagick_INCLUDE_DIRS}")
 MESSAGE( [Main] " ImageMagick_LIBRARIES = ${ImageMagick_LIBRARIES}")
 MESSAGE( [Main] " OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
 MESSAGE( [Main] " MAGICK_CONFIG = ${MAGICK_CONFIG}")
+MESSAGE( [Main] " WEBP_FOUND = ${WEBP_FOUND}")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
