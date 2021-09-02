@@ -40,7 +40,7 @@ fs.readFile(filePath, null, (err, data) => {
             
         // });
 
-        let res = lutis.resizeMagick(400, 400, 0.5, data);
+        let res = lutis.resizeMagick(100, 800, 0.5, data);
         console.log(res);
 
         fs.createWriteStream('out.png').write(res);
