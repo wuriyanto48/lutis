@@ -32,7 +32,7 @@ namespace lutis
         }
 
         double angle = info[0].As<Napi::Number>().DoubleValue();
-        Napi::Buffer<lutis::type::Byte> buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
+        auto buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
 
         Magick::Image image;
 
@@ -99,7 +99,7 @@ namespace lutis
         double height = info[0].As<Napi::Number>().DoubleValue();
         double width = info[1].As<Napi::Number>().DoubleValue();
         double factor = info[2].As<Napi::Number>().DoubleValue();
-        Napi::Buffer<lutis::type::Byte> buf = info[3].As<Napi::Buffer<lutis::type::Byte>>();
+        auto buf = info[3].As<Napi::Buffer<lutis::type::Byte>>();
 
         Magick::Image image;
 
@@ -174,7 +174,7 @@ namespace lutis
             return env.Null();
         }
 
-        Napi::Buffer<lutis::type::Byte> buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
+        auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
 
         lutis::type::InspectData inspectData;
         int inspectResult = lutis::core::Inspect(buf, inspectData);

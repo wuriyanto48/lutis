@@ -15,6 +15,12 @@ namespace lutis
 {
     namespace core 
     {
+
+#define CLEAN_UP(out) { \
+                            lutis::type::Byte* imBytes = out; \
+                            delete[] imBytes; \
+                            }
+
         static int DecodeFromBufferToCvMat(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
         {
             const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
@@ -28,7 +34,7 @@ namespace lutis
             cv::Mat rawImage(1, length, CV_8UC1, (void*)datas);
             dest = cv::imdecode(rawImage, cv::IMREAD_COLOR|cv::IMREAD_ANYDEPTH);
 
-            delete[] datas;
+            CLEAN_UP(datas);
             return 0;
         }
 
@@ -48,10 +54,11 @@ namespace lutis
                 dest.read(blobIn);
             } catch(Magick::Error& err)
             {
+                CLEAN_UP(datas);
                 return 1;
             }
 
-            delete[] datas;
+            CLEAN_UP(datas);
             return 0;
         }
 
@@ -66,12 +73,6 @@ namespace lutis
             inspectDataOut.colorChannelSize = decodedMat.elemSize();
             inspectDataOut.totalArrayElement = decodedMat.total();
             return 0;
-        }
-
-        void CleanUp(lutis::type::Byte** out)
-        {
-            lutis::type::Byte* imBytes = *out;
-            delete[] imBytes;
         }
     }
 }
