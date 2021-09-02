@@ -1,6 +1,6 @@
 # Lutis
 
-An Experimental `OpenCV` binding with `Nodejs`
+An Experimental C/C++ Graphics Lib binding with `Nodejs`
 
 ### Requirements
 - gcc https://gcc.gnu.org/install/binaries.html
@@ -11,6 +11,8 @@ An Experimental `OpenCV` binding with `Nodejs`
 ### Building
 
 - You need to build the `OpenCV` first, please open `build_opencv.md`
+- todo
+- todo
 
 ### TODO
 - fixing `webp`
