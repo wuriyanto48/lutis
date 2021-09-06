@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
-cmake_policy(SET CMP0042 NEW)
+# https://cmake.org/cmake/help/v3.0/policy/CMP0042.html
+# cmake_policy(SET CMP0042 NEW)
 set (CMAKE_CXX_STANDARD 14)
 
 project (lutis)
+
 include_directories(${CMAKE_JS_INC})
 
 set(HEADER_FILES
@@ -16,16 +18,28 @@ set(SOURCE_FILES
     plugin/Lutis.cc
 )
 
-MESSAGE( [Main] "CMAKE_MODULE_PATH = ${CMAKE_MODULE_PATH}")
-
 # -------------------- WebP --------------------
 
-# set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/webp/lib/pkgconfig")
-# set(WebP_DIR ${PROJECT_SOURCE_DIR}/vendor/webp/libwebp-1.2.1)
-# set(WebP_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/webp/include/webp)
-# set(WebP_LIBRARIES ${PROJECT_SOURCE_DIR}/vendor/webp/lib)
+find_path(WEBP_INCLUDE_DIR decode.h
+    ${PROJECT_SOURCE_DIR}/vendor/webp/include/webp/
+)
 
-# find_package(WebP CONFIG REQUIRED)
+set(WEBP_NAMES ${WEBP_NAMES} WebP)
+find_library(WEBP_LIBRARY
+  NAMES ${WEBP_NAMES}
+  PATHS ${PROJECT_SOURCE_DIR}/vendor/webp/lib
+)
+
+if (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
+  set(WEBP_FOUND "YES")
+endif (WEBP_LIBRARY AND WEBP_INCLUDE_DIR)
+
+set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/webp/lib/pkgconfig")
+set(WebP_DIR ${PROJECT_SOURCE_DIR}/vendor/webp/lib/WebP/cmake)
+set(WebP_INCLUDE_DIRS ${WEBP_INCLUDE_DIR})
+set(WebP_LIBRARIES ${WEBP_LIBRARY})
+
+find_package(WebP CONFIG REQUIRED)
 
 # -------------------- Image Magick --------------------
 set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/image_magick/lib/pkgconfig")
@@ -65,14 +79,14 @@ set(CMAKE_CXX_STANDARD 14)
 find_package( OpenCV REQUIRED )
 
 # tell the build to include the headers from OpenCV
-# include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS} ${WebP_INCLUDE_DIRS})
-include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS})
+include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS} ${WebP_INCLUDE_DIRS})
+# include_directories( ${OpenCV_INCLUDE_DIRS}  ${ImageMagick_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} SHARED ${HEADER_FILES} ${SOURCE_FILES} ${CMAKE_JS_SRC})
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
-# target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} ${ImageMagick_LIBRARIES} ${WebP_LIBRARIES})
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} ${ImageMagick_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} -L${ImageMagick_LIBRARIES} -L${WebP_LIBRARIES})
+# target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB} ${OpenCV_LIBS} -L${ImageMagick_LIBRARIES})
 
 # Include Node-API wrappers
 execute_process(COMMAND node -p "require('node-addon-api').include"
@@ -88,9 +102,9 @@ MESSAGE( [Main] " PROJECT_SOURCE_DIR = ${PROJECT_SOURCE_DIR}")
 MESSAGE( [Main] " ImageMagick_FOUND = ${ImageMagick_FOUND}")
 MESSAGE( [Main] " ImageMagick_INCLUDE_DIRS = ${ImageMagick_INCLUDE_DIRS}")
 MESSAGE( [Main] " ImageMagick_LIBRARIES = ${ImageMagick_LIBRARIES}")
-MESSAGE( [Main] " OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
-MESSAGE( [Main] " MAGICK_CONFIG = ${MAGICK_CONFIG}")
 MESSAGE( [Main] " WEBP_FOUND = ${WEBP_FOUND}")
+MESSAGE( [Main] " WebP_LIBRARIES = ${WebP_LIBRARIES}")
+MESSAGE( [Main] " PKG_CONFIG_PATH = $ENV{PKG_CONFIG_PATH}")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
