@@ -8,6 +8,7 @@ build/
 *.jpeg
 *.py
 *.png
+*.webp
 *.txt
 
 vendor/
