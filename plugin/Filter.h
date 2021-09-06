@@ -24,7 +24,7 @@ namespace lutis
             cv::Mat decodedMat;
             int decodeResult = lutis::core::DecodeFromBufferToCvMat(data, decodedMat);
             if (decodeResult != 0)
-                return 1;
+                return -1;
             
             cv::Mat dst = decodedMat.clone();
 

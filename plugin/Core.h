@@ -55,7 +55,7 @@ namespace lutis
             } catch(Magick::Error& err)
             {
                 CLEAN_UP(datas);
-                return 1;
+                return -1;
             }
 
             CLEAN_UP(datas);
@@ -67,7 +67,7 @@ namespace lutis
             cv::Mat decodedMat;
             int decodeResult = DecodeFromBufferToCvMat(data, decodedMat);
             if (decodeResult != 0)
-                return 1;
+                return -1;
 
             inspectDataOut.sizeKB = data.Length() / 1000;
             inspectDataOut.colorChannelSize = decodedMat.elemSize();

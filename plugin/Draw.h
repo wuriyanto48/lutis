@@ -34,6 +34,11 @@ namespace lutis
 
             return 0;
         }
+
+        static int AnnotateTextMagick()
+        {
+            return 0;
+        }
     }
 }
 

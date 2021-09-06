@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <vector>
 #include <Magick++.h>
+#include <webp/decode.h>
 #include "Core.h"
 #include "Draw.h"
 #include "Type.h"
@@ -9,6 +10,42 @@
 
 namespace lutis
 {
+    static Napi::Value DecodeWebp(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 1)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsBuffer())
+        {
+            Napi::TypeError::New(env, "second argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
+        const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(buf.Data());
+        size_t length = buf.Length();
+
+        int width;
+        int height;
+
+        int getInfoRes = WebPGetInfo(arrs, length, &width, &height);
+        if (getInfoRes)
+        {
+            printf("width : %d \n", width);
+            printf("height : %d \n", height);
+        } else
+        {
+            printf("error get info : %d\n", getInfoRes);
+        }
+
+        return env.Null();
+    }
+
     static Napi::Value RotateMagick(const Napi::CallbackInfo& info)
     {
         Napi::Env env = info.Env();
@@ -52,6 +89,7 @@ namespace lutis
             return env.Null();
         }
 
+        // encode
         Magick::Blob blobOut;
         image.magick("PNG");
         image.write(&blobOut);
@@ -117,6 +155,82 @@ namespace lutis
         } catch(Magick::Error& err)
         {
             Napi::TypeError::New(env, "error resize buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Magick::Blob blobOut;
+        image.magick("PNG");
+        image.write(&blobOut);
+
+        lutis::type::Byte datas[blobOut.length()];
+        memcpy(datas, blobOut.data(), blobOut.length());
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
+    }
+
+    static Napi::Value DrawTextMagick(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 2)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsString())
+        {
+            Napi::TypeError::New(env, "first argument should be string").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsBuffer())
+        {
+            Napi::TypeError::New(env, "second argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Napi::String text = info[0].As<Napi::String>();
+        auto buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
+
+        Magick::Image image;
+
+        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        if (decodeRes != 0) {
+            Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        // https://www.imagemagick.org/Magick++/Documentation.html
+
+        // operations
+        try 
+        {
+            // std::vector<Magick::Drawable> textDrawList;
+            // // set the text font: the font is specified via a string representing
+            // // a fully qualified X font name (wildcards '*' are allowed)
+            // textDrawList.push_back(Magick::DrawableFont("-misc-fixed-medium-o-semicondensed—13-*-*-*-c-60-iso8859-1"));
+            // // set the text to be drawn at specified position: x=101, y=50 this case
+            // textDrawList.push_back( Magick::DrawableText(100, 100, text));
+            // // set the text color (the fill color must be set to transparent)
+            // textDrawList.push_back( Magick::DrawableStrokeColor(Magick::Color("black")));
+            // textDrawList.push_back( Magick::DrawableFillColor(Magick::Color("red")));
+
+            // image.draw(textDrawList);
+
+            // // Set draw options 
+            // image.strokeColor("red"); // Outline color 
+             
+            image.fillColor(Magick::ColorRGB(255, 60, 255)); // Fill color 
+            // image.strokeWidth(5);
+            // image.draw( Magick::DrawableCircle(100,100, 50,100) );
+            image.fontFamily("Zapfino");
+            image.fontPointsize(100);
+            Magick::Geometry place = Magick::Geometry(100,100, 100,400);
+            image.annotate(text, place);
+        } catch(Magick::Error& err)
+        {
+            Napi::TypeError::New(env, err.what()).ThrowAsJavaScriptException();
             return env.Null();
         }
 
@@ -323,6 +437,8 @@ namespace lutis
         exports.Set(Napi::String::New(env, "drawMagick"), Napi::Function::New(env, DrawMagick));
         exports.Set(Napi::String::New(env, "rotateMagick"), Napi::Function::New(env, RotateMagick));
         exports.Set(Napi::String::New(env, "resizeMagick"), Napi::Function::New(env, ResizeMagick));
+        exports.Set(Napi::String::New(env, "drawTextMagick"), Napi::Function::New(env, DrawTextMagick));
+        exports.Set(Napi::String::New(env, "decodeWebp"), Napi::Function::New(env, DecodeWebp));
         return exports;
     }
 
