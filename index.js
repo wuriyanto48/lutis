@@ -2,7 +2,7 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'pp.jpg';
+let filePath = 'elasticsearch_logo.png';
 
 fs.readFile(filePath, null, (err, data) => {
     if (err) {
@@ -40,10 +40,13 @@ fs.readFile(filePath, null, (err, data) => {
             
         // });
 
-        let res = lutis.resizeMagick(100, 800, 0.5, data);
+        // let res = lutis.resizeMagick(100, 800, 0.5, data);
+        
+        // let res = lutis.drawTextMagick('hello world', data);
+        let res = lutis.decodeWebp(data);
         console.log(res);
 
-        fs.createWriteStream('out.png').write(res);
+        // fs.createWriteStream('out.png').write(res);
         
     }
 });
