@@ -2,20 +2,41 @@
 
 libwebp_version=1.2.1
 export CURR_DIR=$(pwd)
-webp_install_dir="$CURR_DIR/vendor/webp"
+webp_dir="$CURR_DIR/vendor/webp"
+webp_lib_dir="$CURR_DIR/vendor/webp/lib"
 
-download_url="https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-$libwebp_version.tar.gz"
+# download_url="https://storage.googleapis.com/downloads.webmproject.org/releases/webp/libwebp-$libwebp_version.tar.gz"
+git_url="https://github.com/webmproject/libwebp.git libwebp-$libwebp_version"
 
-rm -rf $webp_install_dir/*
-mkdir -p $webp_install_dir && cd $webp_install_dir
-curl -L $download_url | tar -zxf-
+rm -rf $webp_dir/*
+mkdir -p $webp_dir && cd $webp_dir
+# curl -L $download_url | tar -zxf-
+git clone $git_url
 cd libwebp*
 
-./configure \
-    --prefix=$webp_install_dir \
-    --disable-static \
-    --enable-shared \
-    --enable-swap-16bit-csp
+# ./configure \
+#     --prefix=$webp_dir \
+#     --disable-static \
+#     --enable-shared \
+#     --enable-swap-16bit-csp
+
+mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=$webp_dir \
+    -DCMAKE_BUILD_TYPE="Release" -DCMAKE_INSTALL_DATADIR=$webp_lib_dir -DCMAKE_INSTALL_LIBDIR=$webp_lib_dir \
+    -DWEBP_ENABLE_SWAP_16BIT_CSP=ON -DBUILD_SHARED_LIBS=ON -DBUILD_STATIC_LIBS=OFF  ../
 
 make
 make install
+
+lib_ext=".so"
+
+os_type=${OSTYPE//[0-9.-]*/}
+if [[ "$os_type" == 'darwin' ]]; then
+   lib_ext='dylib'
+elif [[ "$os_type" == 'linux' ]]; then
+   lib_ext='so'
+fi
+
+config_file="$webp_lib_dir/WebP/cmake/WebPConfig.cmake"
+
+replacement="$webp_lib_dir;$webp_lib_dir/libwebpdecoder.$lib_ext;$webp_lib_dir/libwebp.$lib_ext;$webp_lib_dir/libwebpdemux.$lib_ext;$webp_lib_dir/libwebpmux.$lib_ext"
+sed -i.bak '34s%webpdecoder;webp;webpdemux;libwebpmux%'"$replacement"'%' $config_file
