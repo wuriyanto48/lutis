@@ -7,10 +7,10 @@ build-vendor:
 	&& ./scripts/jpeg \
 	&& ./scripts/webp \
 	&& ./scripts/imagemagick \
-	echo 'finish build vendor and dependencies'
+	&& echo 'finish build vendor and dependencies'
 
 build:
 	echo 'clean and build project' \
 	&& rm -rf build/ \
 	&& npm run build \
-	echo 'finish cleann and build project'
+	&& echo 'finish clean and build project'
