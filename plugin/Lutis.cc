@@ -451,7 +451,6 @@ namespace lutis
         int image_height = 500;
 
         lutis::type::Byte* out_data = nullptr;
-        size_t out_data_length;
 
         // With a pattern
         lutis::type::Byte* black_white_buffer = nullptr;
@@ -469,7 +468,7 @@ namespace lutis
         lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, 1);
         input->Read(&black_white_buffer);
 
-        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_GRAYSCALE, &out_data, &out_data_length);
+        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_GRAYSCALE, &out_data);
         if (write_res != 0)
         {
             Napi::TypeError::New(env, "error writing jpeg data").ThrowAsJavaScriptException();
@@ -479,7 +478,7 @@ namespace lutis
         delete input;
         delete[] out_data;
 
-        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, out_data_length);
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, input->Length());
     }
 
     Napi::Object Init(Napi::Env env, Napi::Object exports)

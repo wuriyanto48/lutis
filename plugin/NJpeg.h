@@ -51,13 +51,18 @@ namespace lutis
                     return channel;
                 }
 
+                size_t Length() const
+                {
+                    return length;
+                }
+
                 void Read(lutis::type::Byte** data)
                 {
                     if (data != nullptr)
                         this->data = *data;
                 }
 
-                int ToBuffer(J_COLOR_SPACE color_space, lutis::type::Byte** out, size_t* out_length)
+                int ToBuffer(J_COLOR_SPACE color_space, lutis::type::Byte** out)
                 {
                     jpeg_compress_struct cinfo;
                     jpeg_create_compress(&cinfo);
@@ -65,8 +70,10 @@ namespace lutis
                     jpeg_error_mgr jpeg_err;
                     cinfo.err = jpeg_std_error(&jpeg_err);
 
+                    size_t out_length;
+
                     /* set to in memory buffer */
-                    jpeg_mem_dest(&cinfo, out, out_length);
+                    jpeg_mem_dest(&cinfo, out, &out_length);
 
                     cinfo.image_width      = width;
                     cinfo.image_height     = height;
@@ -85,6 +92,8 @@ namespace lutis
 
                     jpeg_finish_compress(&cinfo);
                     jpeg_destroy_compress(&cinfo);
+
+                    length = out_length;
 
                     return 0;
                 }
@@ -119,6 +128,7 @@ namespace lutis
                     // *out = new lutis::type::Byte[mem_size];
 
                     NJpeg* out = new NJpeg(width, height, channel);
+                    out->length = size_data;
 
                     const uint32_t row_stride = width * channel;
                     
@@ -138,6 +148,7 @@ namespace lutis
                 uint32_t width;
                 uint32_t height;
                 uint32_t channel;
+                size_t length;
                 lutis::type::Byte* data;
         };
     }
