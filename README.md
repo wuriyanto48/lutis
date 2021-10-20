@@ -3,7 +3,7 @@
 An Experimental C/C++ Graphics Lib binding with `Nodejs`
 
 ### Requirements
-- gcc https://gcc.gnu.org/install/binaries.html
+- C and C++ compiler, gcc https://gcc.gnu.org/install/binaries.html
 - cmake https://cmake.org/download/
 - OpenCV https://github.com/opencv/opencv
 - OpenCV Contrib https://github.com/opencv/opencv_contrib
