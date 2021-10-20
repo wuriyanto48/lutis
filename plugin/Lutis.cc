@@ -455,9 +455,9 @@ namespace lutis
         lutis::type::Byte* out_data = nullptr;
 
         // With a pattern
-        lutis::type::Byte* black_white_buffer = nullptr;
+        lutis::type::Byte* random_pixel_buffer = nullptr;
         uint32_t channel = 3;
-        black_white_buffer = new lutis::type::Byte[image_width * image_height * channel];
+        random_pixel_buffer = new lutis::type::Byte[image_width * image_height * channel];
 
         /* initialize random seed: */
         srand (time(NULL));
@@ -466,13 +466,13 @@ namespace lutis
             for (int i = 0; i != image_width*channel; i++)
             {
                 
-                black_white_buffer[i + j * (image_width*channel)] = rand() % 256;
+                random_pixel_buffer[i + j * (image_width*channel)] = rand() % 256;
                 printf(" -- h: %d | w: %d c: %d in: %d\n", i, j, rand() % 256, (i + j * image_width));
             }   
         }
 
         lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, channel);
-        input->Read(&black_white_buffer);
+        input->Read(&random_pixel_buffer);
 
         int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_RGB, &out_data);
         if (write_res != 0)
