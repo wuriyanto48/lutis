@@ -2,7 +2,14 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'elasticsearch_logo.png';
+let filePath = 'pp.webp';
+
+let res = lutis.generateJpeg('out.jpeg');
+fs.writeFile('out.jpeg', res, 'binary', (err) => {
+    if (err) {
+        console.log(err);
+    }
+});
 
 fs.readFile(filePath, null, (err, data) => {
     if (err) {
