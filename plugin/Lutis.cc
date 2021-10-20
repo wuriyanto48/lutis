@@ -1,5 +1,7 @@
 #include <napi.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 #include <vector>
 #include <Magick++.h>
 #include <webp/decode.h>
@@ -454,21 +456,25 @@ namespace lutis
 
         // With a pattern
         lutis::type::Byte* black_white_buffer = nullptr;
-        black_white_buffer = new lutis::type::Byte[image_width * image_height];
+        uint32_t channel = 3;
+        black_white_buffer = new lutis::type::Byte[image_width * image_height * channel];
 
+        /* initialize random seed: */
+        srand (time(NULL));
         for (int j = 0; j != image_height; j++) 
         {
-            for (int i = 0; i != image_width; i++)
+            for (int i = 0; i != image_width*channel; i++)
             {
-                black_white_buffer[i + j * image_width] = (i + j) / 2;
-                // printf(" -- %d ", i + j);
+                
+                black_white_buffer[i + j * (image_width*channel)] = rand() % 256;
+                printf(" -- h: %d | w: %d c: %d in: %d\n", i, j, rand() % 256, (i + j * image_width));
             }   
         }
 
-        lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, 1);
+        lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, channel);
         input->Read(&black_white_buffer);
 
-        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_GRAYSCALE, &out_data);
+        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_RGB, &out_data);
         if (write_res != 0)
         {
             Napi::TypeError::New(env, "error writing jpeg data").ThrowAsJavaScriptException();
