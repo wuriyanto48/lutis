@@ -7,6 +7,7 @@ An Experimental C/C++ Graphics Lib binding with `Nodejs`
 - cmake https://cmake.org/download/
 - OpenCV https://github.com/opencv/opencv
 - OpenCV Contrib https://github.com/opencv/opencv_contrib
+- ImageMagick https://github.com/ImageMagick/ImageMagick.git
 - LibJpeg https://github.com/stohrendorf/libjpeg-cmake.git
 - LibPng https://github.com/glennrp/libpng.git
 - LibWebp https://github.com/webmproject/libwebp.git
