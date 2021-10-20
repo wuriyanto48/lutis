@@ -1,5 +1,5 @@
-#ifndef HEADER_IMAGE_H
-#define HEADER_IMAGE_H
+#ifndef HEADER_CORE_H
+#define HEADER_CORE_H
 
 #include <napi.h>
 #include "Type.h"
