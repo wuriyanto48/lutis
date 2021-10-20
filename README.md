@@ -19,4 +19,4 @@ An Experimental C/C++ Graphics Lib binding with `Nodejs`
 - todo
 
 ### TODO
-- automate `OpenCV` builder
+- automate `OpenCV` build
