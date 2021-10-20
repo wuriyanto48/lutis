@@ -3,10 +3,12 @@
 #include <vector>
 #include <Magick++.h>
 #include <webp/decode.h>
+#include <jpeglib.h>
 #include "Core.h"
 #include "Draw.h"
 #include "Type.h"
 #include "Filter.h"
+#include "NJpeg.h"
 
 namespace lutis
 {
@@ -429,6 +431,57 @@ namespace lutis
         });
     }
 
+    static Napi::Value GenerateJpeg(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 1)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsString())
+        {
+            Napi::TypeError::New(env, "required filename").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        int image_width = 500;
+        int image_height = 500;
+
+        lutis::type::Byte* out_data = nullptr;
+        size_t out_data_length;
+
+        // With a pattern
+        lutis::type::Byte* black_white_buffer = nullptr;
+        black_white_buffer = new lutis::type::Byte[image_width * image_height];
+
+        for (int j = 0; j != image_height; j++) 
+        {
+            for (int i = 0; i != image_width; i++)
+            {
+                black_white_buffer[i + j * image_width] = (i + j) / 2;
+                // printf(" -- %d ", i + j);
+            }   
+        }
+
+        lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, 1);
+        input->Read(&black_white_buffer);
+
+        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_GRAYSCALE, &out_data, &out_data_length);
+        if (write_res != 0)
+        {
+            Napi::TypeError::New(env, "error writing jpeg data").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        delete input;
+        delete[] out_data;
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, out_data_length);
+    }
+
     Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         exports.Set(Napi::String::New(env, "inspect"), Napi::Function::New(env, Inspect));
@@ -439,6 +492,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "resizeMagick"), Napi::Function::New(env, ResizeMagick));
         exports.Set(Napi::String::New(env, "drawTextMagick"), Napi::Function::New(env, DrawTextMagick));
         exports.Set(Napi::String::New(env, "decodeWebp"), Napi::Function::New(env, DecodeWebp));
+        exports.Set(Napi::String::New(env, "generateJpeg"), Napi::Function::New(env, GenerateJpeg));
         return exports;
     }
 
