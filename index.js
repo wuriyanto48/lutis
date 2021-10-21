@@ -2,14 +2,14 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'pp.jpg';
+let filePath = 'out.jpeg';
 
-let res = lutis.generateJpeg('out.jpeg');
-fs.writeFile('out.jpeg', res, 'binary', (err) => {
-    if (err) {
-        console.log(err);
-    }
-});
+// let res = lutis.randomPixelJpeg('out.jpeg');
+// fs.writeFile('out.jpeg', res, 'binary', (err) => {
+//     if (err) {
+//         console.log(err);
+//     }
+// });
 
 fs.readFile(filePath, null, (err, data) => {
     if (err) {
@@ -19,7 +19,7 @@ fs.readFile(filePath, null, (err, data) => {
         
         fs.writeFile('gray_out.jpeg', res, 'binary', (err) => {
             if (err) {
-                console.log(err);
+                console.log('------', err);
             }
         });
     }

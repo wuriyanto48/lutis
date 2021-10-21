@@ -433,7 +433,7 @@ namespace lutis
         });
     }
 
-    static Napi::Value GenerateJpeg(const Napi::CallbackInfo& info)
+    static Napi::Value RandomPixelJpeg(const Napi::CallbackInfo& info)
     {
         Napi::Env env = info.Env();
 
@@ -549,7 +549,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "resizeMagick"), Napi::Function::New(env, ResizeMagick));
         exports.Set(Napi::String::New(env, "drawTextMagick"), Napi::Function::New(env, DrawTextMagick));
         exports.Set(Napi::String::New(env, "decodeWebp"), Napi::Function::New(env, DecodeWebp));
-        exports.Set(Napi::String::New(env, "generateJpeg"), Napi::Function::New(env, GenerateJpeg));
+        exports.Set(Napi::String::New(env, "randomPixelJpeg"), Napi::Function::New(env, RandomPixelJpeg));
         exports.Set(Napi::String::New(env, "grayFilterJpeg"), Napi::Function::New(env, GrayFilterJpeg));
         return exports;
     }
