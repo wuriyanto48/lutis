@@ -98,7 +98,6 @@ namespace lutis
                     
                     NWebp* nw = new NWebp(_width, _height, decoder_conf.output.u.RGBA.stride, 0);
 
-                    printf("webp size %zu\n", decoder_conf.output.u.RGBA.size);
                     nw->data = new lutis::type::Byte[decoder_conf.output.u.RGBA.size];
                     memcpy(nw->data, decoder_conf.output.u.RGBA.rgba, decoder_conf.output.u.RGBA.size);
 

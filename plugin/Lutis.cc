@@ -40,7 +40,9 @@ namespace lutis
             return env.Null();
         }
 
+        printf("webp size %zu\n", nw->Length());
         printf("colorspace: %d\n", nw->ColorSpace());
+        printf("stride: %d\n", nw->Stride());
 
         delete nw;
 
