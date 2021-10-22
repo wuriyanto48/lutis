@@ -61,6 +61,11 @@ namespace lutis
                     return length;
                 }
 
+                size_t OriginalLength() const
+                {
+                    return original_length;
+                }
+
                 WEBP_CSP_MODE ColorSpace() const
                 {
                     return colorspace;
@@ -102,6 +107,7 @@ namespace lutis
                     memcpy(nw->data, decoder_conf.output.u.RGBA.rgba, decoder_conf.output.u.RGBA.size);
 
                     nw->length = decoder_conf.output.u.RGBA.size;
+                    nw->original_length = size_data;
                     nw->colorspace = decoder_conf.output.colorspace;
                     WebPFreeDecBuffer(&decoder_conf.output);
 
@@ -115,6 +121,7 @@ namespace lutis
                 float quality_factor;
                 WEBP_CSP_MODE colorspace;
                 size_t length;
+                size_t original_length;
                 lutis::type::Byte* data;
         };
     }
