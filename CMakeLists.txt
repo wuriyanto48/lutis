@@ -12,6 +12,8 @@ set(HEADER_FILES
     plugin/Draw.h
     plugin/Filter.h
     plugin/Core.h
+    plugin/NJpeg.h
+    plugin/NWebp.h
 )
 
 set(SOURCE_FILES 
