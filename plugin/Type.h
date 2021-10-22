@@ -1,6 +1,8 @@
 #ifndef HEADER_TYPE_H
 #define HEADER_TYPE_H
 
+#include <iostream>
+
 namespace lutis 
 {
     namespace type 
@@ -11,6 +13,13 @@ namespace lutis
             double R;
             double G;
             double B;
+            double A;
+
+            void Debug()
+            {
+                printf("{ %f, %f, %f, %f }\n", R, G, B, A);
+            }
+
         } c_rgb;
 
         struct InspectData {

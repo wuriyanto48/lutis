@@ -44,9 +44,23 @@ namespace lutis
         printf("colorspace: %d\n", nw->ColorSpace());
         printf("stride: %d\n", nw->Stride());
 
+        // auto p_data = nw->PixelData();
+        
+        // for (int i = 0; i < p_data.size(); i++)
+        // {
+        //     p_data[i].Debug();
+        // }
+
+        // test encode
+        lutis::type::Byte* out_data = nullptr;
+
+        size_t encode_res = WebPEncodeRGBA(nw->Data(), nw->Width(), nw->Height(), nw->Stride(), (float)60, &out_data);
+
+        printf("encode_res: %lu\n", encode_res);
+
         delete nw;
 
-        return env.Null();
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, nw->OriginalLength());
     }
 
     static Napi::Value RotateMagick(const Napi::CallbackInfo& info)
