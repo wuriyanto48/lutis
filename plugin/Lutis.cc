@@ -11,6 +11,7 @@
 #include "Type.h"
 #include "Filter.h"
 #include "NJpeg.h"
+#include "NWebp.h"
 
 namespace lutis
 {
@@ -31,21 +32,17 @@ namespace lutis
         }
 
         auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
-        const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(buf.Data());
-        size_t length = buf.Length();
 
-        int width;
-        int height;
-
-        int getInfoRes = WebPGetInfo(arrs, length, &width, &height);
-        if (getInfoRes)
+        lutis::nwebp::NWebp* nw = lutis::nwebp::NWebp::FromBuffer(buf);
+        if (nw == nullptr)
         {
-            printf("width : %d \n", width);
-            printf("height : %d \n", height);
-        } else
-        {
-            printf("error get info : %d\n", getInfoRes);
+            Napi::TypeError::New(env, "error decode webp from buffer").ThrowAsJavaScriptException();
+            return env.Null();
         }
+
+        printf("colorspace: %d\n", nw->ColorSpace());
+
+        delete nw;
 
         return env.Null();
     }
@@ -437,20 +434,26 @@ namespace lutis
     {
         Napi::Env env = info.Env();
 
-        if (info.Length() < 1)
+        if (info.Length() < 2)
         {
             Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        if (!info[0].IsString())
+        if (!info[0].IsNumber())
         {
-            Napi::TypeError::New(env, "required filename").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "first argument should be number").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        int image_width = 500;
-        int image_height = 500;
+        if (!info[1].IsNumber())
+        {
+            Napi::TypeError::New(env, "second argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        uint32_t image_width = info[0].As<Napi::Number>().Uint32Value();
+        uint32_t image_height = info[1].As<Napi::Number>().Uint32Value();
 
         lutis::type::Byte* out_data = nullptr;
 
