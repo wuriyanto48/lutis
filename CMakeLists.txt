@@ -18,7 +18,7 @@ set(HEADER_FILES
 )
 
 set(SOURCE_FILES 
-    plugin/Lutis.cc
+    plugin/Lutis.cpp
 )
 
 # check dynamic lib ext for specific OS
@@ -205,6 +205,9 @@ MESSAGE( [Main] " ZLIB_INCLUDE_DIR = ${ZLIB_INCLUDE_DIR}")
 MESSAGE( [Main] " ZLIB_LIBRARY = ${ZLIB_LIBRARY}")
 
 MESSAGE( [Main] " DYNAMIC_LIB_EXT = ${DYNAMIC_LIB_EXT}")
+
+MESSAGE( [Main] " OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
+MESSAGE( [Main] " OpenCV_LIBS = ${OpenCV_LIBS}")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
