@@ -28,12 +28,6 @@ namespace lutis
                         delete[] data;
                 }
 
-                void Read(lutis::type::Byte** data)
-                {
-                    if (data != nullptr)
-                        this->data = *data;
-                }
-
                 int ToBuffer(J_COLOR_SPACE color_space, lutis::type::Byte** out)
                 {
                     jpeg_compress_struct cinfo;

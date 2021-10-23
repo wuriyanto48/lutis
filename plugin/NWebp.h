@@ -49,12 +49,6 @@ namespace lutis
                     return colorspace;
                 }
 
-                void Read(lutis::type::Byte** data)
-                {
-                    if (data != nullptr)
-                        this->data = *data;
-                }
-
                 int ToBuffer( lutis::type::Byte** out)
                 {
                     WebPConfig webpconfig;

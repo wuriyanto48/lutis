@@ -57,6 +57,12 @@ namespace lutis
                     return length;
                 }
 
+                void Read(lutis::type::Byte** data)
+                {
+                    if (data != nullptr)
+                        this->data = *data;
+                }
+
                 // simple formula to take each 3 flat pixel data and put it to struct
                 // https://play.golang.org/p/CntT9L67Dxy
                 const std::vector<lutis::type::Color>& PixelData()
