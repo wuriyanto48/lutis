@@ -8,6 +8,7 @@ project (lutis)
 include_directories(${CMAKE_JS_INC})
 
 set(HEADER_FILES
+    plugin/Base.h
     plugin/Type.h
     plugin/Draw.h
     plugin/Filter.h
