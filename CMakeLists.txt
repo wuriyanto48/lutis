@@ -48,7 +48,7 @@ find_package(ZLIB REQUIRED)
 # )
 
 # set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/png/lib/pkgconfig")
-set(PNG_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/png/lib/libpng16.16.${DYNAMIC_LIB_EXT})
+set(PNG_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/png/lib/libpng16.${DYNAMIC_LIB_EXT})
 set(PNG_PNG_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/vendor/png/include/libpng16)
 set(PNG_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/png/include/libpng16)
 set(PNG_LIBRARIES ${PNG_LIBRARY})
