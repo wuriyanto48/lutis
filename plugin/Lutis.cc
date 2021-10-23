@@ -54,9 +54,25 @@ namespace lutis
         // test encode
         lutis::type::Byte* out_data = nullptr;
 
-        size_t encode_res = WebPEncodeRGBA(nw->Data(), nw->Width(), nw->Height(), nw->Stride(), (float)60, &out_data);
+        // manual encode
+        // size_t encode_res = WebPEncodeRGBA(nw->Data(), nw->Width(), nw->Height(), nw->Stride(), (float)60, &out_data);
 
-        printf("encode_res: %lu\n", encode_res);
+        // printf("encode_res: %lu\n", encode_res);
+
+        // with advance encode (On Progress)
+        std::vector<lutis::type::Byte> gray_pixel = nw->ToGrayPixel();
+        
+        lutis::type::Byte* gray_data = new lutis::type::Byte[gray_pixel.size()];
+        memcpy(gray_data, gray_pixel.data(), gray_pixel.size());
+
+        nw->Read(&gray_data);
+
+        int encode_ok = nw->ToBuffer(&out_data);
+        if (encode_ok != 0)
+        {
+            Napi::TypeError::New(env, "error encode webp to buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
 
         delete nw;
 

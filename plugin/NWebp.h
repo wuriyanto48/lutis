@@ -49,55 +49,74 @@ namespace lutis
                     return colorspace;
                 }
 
-            public:
-                // simple formula to take each 3 flat pixel data and put it to struct
-                // https://play.golang.org/p/CntT9L67Dxy
-                const std::vector<lutis::type::Color>& PixelData()
+                void Read(lutis::type::Byte** data)
                 {
-                    uint32_t channel = 4;
-                    if (data == nullptr)
-                        return pixel_data;
-
-                    for (int h = 0; h != height; h++) 
-                    {
-                        for (int w = 0; w != width; w++)
-                        {
-                            struct lutis::type::Color c;
-                            c.R = data[(h*width*channel)+(w*channel)+0];
-                            c.G = data[(h*width*channel)+(w*channel)+1];
-                            c.B = data[(h*width*channel)+(w*channel)+2];
-                            c.A = data[(h*width*channel)+(w*channel)+3];
-                            pixel_data.push_back(c);
-                        }
-
-                    }
-                    return pixel_data;
+                    if (data != nullptr)
+                        this->data = *data;
                 }
 
-                // http://en.wikipedia.org/wiki/Luma_%28video%29
-                // basic grayscale filter
-                std::vector<lutis::type::Byte> ToGrayPixel()
+                int ToBuffer( lutis::type::Byte** out)
                 {
-                    auto p_data = PixelData();
-                    std::vector<lutis::type::Byte> flat_pixel;
-                    
-                    for (int i = 0; i < p_data.size(); i++)
+                    WebPConfig webpconfig;
+                    WebPPicture webpicture;
+                    WebPMemoryWriter writer;
+
+                    WebPMemoryWriterInit(&writer);
+                    if (!WebPPictureInit(&webpicture) || !WebPConfigInit(&webpconfig)) return -1;
+
+                    // Add additional tuning:
+                    webpconfig.sns_strength = 90;
+                    webpconfig.filter_sharpness = 6;
+                    webpconfig.alpha_quality = 90;
+
+                    if (!WebPConfigPreset(&webpconfig, WEBP_PRESET_DEFAULT, quality_factor))
                     {
-                        auto c = p_data[i];
-
-                        float red = (float) c.R * 0.299;
-                        float green = (float) c.G * 0.587;
-                        float blue = (float)c.B * 0.114;
-
-                        // gray pixel
-                        lutis::type::Byte gray = (lutis::type::Byte) (red + green + blue);
-
-                        flat_pixel.push_back(gray);
-                        flat_pixel.push_back(gray);
-                        flat_pixel.push_back(gray);
+                        FreeWebp(&webpicture, &writer);
+                        return -1;
                     }
 
-                    return flat_pixel;
+                    if (!WebPValidateConfig(&webpconfig))
+                    {
+                        FreeWebp(&webpicture, &writer);
+                        return -1;
+                    }
+
+                    webpicture.width = width;
+                    webpicture.height = height;
+
+                    webpicture.use_argb = 1;
+
+                    if (!WebPPictureAlloc(&webpicture))
+                    {
+                        FreeWebp(&webpicture, &writer);
+                        return -1;
+                    }
+
+                    int import_ok = channel == 4 ? WebPPictureImportRGBA(&webpicture, data, stride) 
+                        : WebPPictureImportRGB(&webpicture, data, stride);
+                    if (!import_ok)
+                    {
+                        FreeWebp(&webpicture, &writer);
+                        return -1;
+                    }
+
+                    webpicture.writer = WebPMemoryWrite;
+                    webpicture.custom_ptr = &writer;
+
+                    // encode
+                    int encode_ok = WebPEncode(&webpconfig, &webpicture);
+                    if (!encode_ok) 
+                    {
+                        FreeWebp(&webpicture, &writer);
+                        return -1;
+                    }
+
+                    printf("encode writer.size: %lu\n", writer.size);
+                    *out = writer.mem;
+
+                    FreeWebp(&webpicture, &writer);
+
+                    return 0;
                 }
 
             public:
@@ -130,7 +149,7 @@ namespace lutis
                     if (WebPDecode(raw_data, size_data, &decoder_conf) != VP8_STATUS_OK)
                         return nullptr;
                     
-                    NWebp* nw = new NWebp(_width, _height, 4, decoder_conf.output.u.RGBA.stride, 0);
+                    NWebp* nw = new NWebp(_width, _height, 4, decoder_conf.output.u.RGBA.stride, 60);
 
                     nw->data = new lutis::type::Byte[decoder_conf.output.u.RGBA.size];
                     memcpy(nw->data, decoder_conf.output.u.RGBA.rgba, decoder_conf.output.u.RGBA.size);
@@ -149,6 +168,13 @@ namespace lutis
                 float quality_factor;
                 WEBP_CSP_MODE colorspace;
                 size_t original_length;
+            
+            private:
+                void FreeWebp(WebPPicture* pic, WebPMemoryWriter* writer)
+                {
+                    WebPMemoryWriterClear(writer);
+                    WebPPictureFree(pic);
+                }
         };
     }
 }
