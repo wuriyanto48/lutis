@@ -29,6 +29,8 @@ jobs:
         run: bash ./scripts/install_dep_ubuntu
       - name: Install cmake-js
         run: npm install -g cmake-js
+      - name: Install Node dependencies
+        run: npm install
       - name: Build Vendor
         run: make build-vendor
       - name: Build Project
