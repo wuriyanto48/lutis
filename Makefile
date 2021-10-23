@@ -2,7 +2,8 @@
 
 build-vendor:
 	echo 'build vendor and dependencies...' \
-	&& chmod +x ./scripts/zlib && chmod +x ./scripts/png && chmod +x ./scripts/jpeg && chmod +x ./scripts/webp && chmod +x ./scripts/imagemagick \
+	&& chmod +x ./scripts/opencv && chmod +x ./scripts/zlib && chmod +x ./scripts/png && chmod +x ./scripts/jpeg && chmod +x ./scripts/webp && chmod +x ./scripts/imagemagick \
+	&& ./scripts/opencv \
 	&& ./scripts/zlib \
 	&& ./scripts/png \
 	&& ./scripts/jpeg \
