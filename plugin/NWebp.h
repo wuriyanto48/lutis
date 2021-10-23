@@ -49,7 +49,7 @@ namespace lutis
                     return colorspace;
                 }
 
-                int ToBuffer( lutis::type::Byte** out)
+                int ToBuffer(lutis::type::Byte** out)
                 {
                     WebPConfig webpconfig;
                     WebPPicture webpicture;
@@ -106,7 +106,8 @@ namespace lutis
                     }
 
                     printf("encode writer.size: %lu\n", writer.size);
-                    *out = writer.mem;
+                    *out = new lutis::type::Byte[original_length];
+                    std::memcpy(*out, writer.mem, original_length);
 
                     FreeWebp(&webpicture, &writer);
 
@@ -114,7 +115,7 @@ namespace lutis
                 }
 
             public:
-                static NWebp* FromBuffer(const Napi::Buffer<lutis::type::Byte>& input)
+                static NWebp* FromBuffer(const Napi::Buffer<lutis::type::Byte>& input, float _quality_factor)
                 {
                     lutis::type::Byte* raw_data = reinterpret_cast<lutis::type::Byte*>(input.Data());
                     const size_t size_data = input.Length();
@@ -143,7 +144,11 @@ namespace lutis
                     if (WebPDecode(raw_data, size_data, &decoder_conf) != VP8_STATUS_OK)
                         return nullptr;
                     
-                    NWebp* nw = new NWebp(_width, _height, 4, decoder_conf.output.u.RGBA.stride, 60);
+                    // set default _quality_factor
+                    if (_quality_factor == 0)
+                        _quality_factor = 50;
+                        
+                    NWebp* nw = new NWebp(_width, _height, 4, decoder_conf.output.u.RGBA.stride, _quality_factor);
 
                     nw->data = new lutis::type::Byte[decoder_conf.output.u.RGBA.size];
                     memcpy(nw->data, decoder_conf.output.u.RGBA.rgba, decoder_conf.output.u.RGBA.size);

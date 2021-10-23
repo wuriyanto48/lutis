@@ -33,7 +33,7 @@ namespace lutis
 
         auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
 
-        lutis::nwebp::NWebp* nw = lutis::nwebp::NWebp::FromBuffer(buf);
+        lutis::nwebp::NWebp* nw = lutis::nwebp::NWebp::FromBuffer(buf, 80);
         if (nw == nullptr)
         {
             Napi::TypeError::New(env, "error decode webp from buffer").ThrowAsJavaScriptException();
@@ -75,6 +75,7 @@ namespace lutis
         }
 
         delete nw;
+        delete[] out_data;
 
         return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, nw->OriginalLength());
     }
