@@ -21,7 +21,7 @@ namespace lutis
                             delete[] imBytes; \
                             }
 
-        static int DecodeFromBufferToCvMat(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
+        static int DecodeBufferToCvMat(const Napi::Buffer<lutis::type::Byte>& data, cv::Mat& dest)
         {
             const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
 
@@ -38,7 +38,7 @@ namespace lutis
             return 0;
         }
 
-        static int DecodeFromBufferToMagickImage(const Napi::Buffer<lutis::type::Byte>& data, Magick::Image& dest)
+        static int DecodeBufferToMagickImage(const Napi::Buffer<lutis::type::Byte>& data, Magick::Image& dest)
         {
             const lutis::type::Byte* arrs = reinterpret_cast<lutis::type::Byte*>(data.Data());
 
@@ -65,7 +65,7 @@ namespace lutis
         static int Inspect(const Napi::Buffer<lutis::type::Byte>& data, lutis::type::InspectData& inspectDataOut)
         {
             cv::Mat decodedMat;
-            int decodeResult = DecodeFromBufferToCvMat(data, decodedMat);
+            int decodeResult = DecodeBufferToCvMat(data, decodedMat);
             if (decodeResult != 0)
                 return -1;
 

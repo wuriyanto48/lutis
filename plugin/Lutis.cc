@@ -107,7 +107,7 @@ namespace lutis
 
         Magick::Image image;
 
-        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        int decodeRes = lutis::core::DecodeBufferToMagickImage(buf, image);
         if (decodeRes != 0) {
             Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
             return env.Null();
@@ -175,7 +175,7 @@ namespace lutis
 
         Magick::Image image;
 
-        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        int decodeRes = lutis::core::DecodeBufferToMagickImage(buf, image);
         if (decodeRes != 0) {
             Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
             return env.Null();
@@ -229,7 +229,7 @@ namespace lutis
 
         Magick::Image image;
 
-        int decodeRes = lutis::core::DecodeFromBufferToMagickImage(buf, image);
+        int decodeRes = lutis::core::DecodeBufferToMagickImage(buf, image);
         if (decodeRes != 0) {
             Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
             return env.Null();
