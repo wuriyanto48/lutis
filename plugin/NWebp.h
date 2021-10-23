@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include "Type.h"
+#include "Base.h"
 
 // Webp utility
 namespace lutis 
@@ -15,17 +16,14 @@ namespace lutis
     namespace nwebp
     {
 
-        class NWebp
+        class NWebp : public lutis::base::NBase
         {
             public:
-                NWebp(uint32_t width, uint32_t height, uint32_t stride, float quality_factor)
+                NWebp(uint32_t width, uint32_t height, uint32_t channel, uint32_t stride, float quality_factor)
+                : lutis::base::NBase(width, height, channel)
                 {
-                    this->width = width;
-                    this->height = height;
                     this->stride = stride;
                     this->quality_factor = quality_factor;
-
-                    data = nullptr;
                 }
 
                 ~NWebp()
@@ -36,29 +34,9 @@ namespace lutis
                     }
                 }
 
-                lutis::type::Byte* Data() 
-                {
-                    return data;
-                }
-
-                uint32_t Width() const
-                {
-                    return width;
-                }
-
-                uint32_t Height() const
-                {
-                    return height;
-                }
-
                 uint32_t Stride() const
                 {
                     return stride;
-                }
-
-                size_t Length() const
-                {
-                    return length;
                 }
 
                 size_t OriginalLength() const
@@ -152,7 +130,7 @@ namespace lutis
                     if (WebPDecode(raw_data, size_data, &decoder_conf) != VP8_STATUS_OK)
                         return nullptr;
                     
-                    NWebp* nw = new NWebp(_width, _height, decoder_conf.output.u.RGBA.stride, 0);
+                    NWebp* nw = new NWebp(_width, _height, 4, decoder_conf.output.u.RGBA.stride, 0);
 
                     nw->data = new lutis::type::Byte[decoder_conf.output.u.RGBA.size];
                     memcpy(nw->data, decoder_conf.output.u.RGBA.rgba, decoder_conf.output.u.RGBA.size);
@@ -167,15 +145,10 @@ namespace lutis
                 }
 
             private:
-                uint32_t width;
-                uint32_t height;
                 uint32_t stride;
                 float quality_factor;
                 WEBP_CSP_MODE colorspace;
-                size_t length;
                 size_t original_length;
-                lutis::type::Byte* data;
-                std::vector<lutis::type::Color> pixel_data;
         };
     }
 }
