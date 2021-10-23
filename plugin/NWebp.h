@@ -62,6 +62,7 @@ namespace lutis
                     webpconfig.sns_strength = 90;
                     webpconfig.filter_sharpness = 6;
                     webpconfig.alpha_quality = 90;
+                    webpconfig.quality = quality_factor;
 
                     if (!WebPConfigPreset(&webpconfig, WEBP_PRESET_DEFAULT, quality_factor))
                     {
