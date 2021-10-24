@@ -15,6 +15,7 @@ set(HEADER_FILES
     plugin/Core.h
     plugin/NJpeg.h
     plugin/NWebp.h
+    plugin/NMagick.h
 )
 
 set(SOURCE_FILES 

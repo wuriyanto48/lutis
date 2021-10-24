@@ -12,6 +12,7 @@
 #include "Filter.h"
 #include "NJpeg.h"
 #include "NWebp.h"
+#include "NMagick.h"
 
 namespace lutis
 {
@@ -174,33 +175,25 @@ namespace lutis
         double factor = info[2].As<Napi::Number>().DoubleValue();
         auto buf = info[3].As<Napi::Buffer<lutis::type::Byte>>();
 
-        Magick::Image image;
-
-        int decodeRes = lutis::core::DecodeBufferToMagickImage(buf, image);
-        if (decodeRes != 0) {
-            Napi::TypeError::New(env, "error decoding buffer").ThrowAsJavaScriptException();
+        lutis::nmagick::NMagick* nmagick = lutis::nmagick::NMagick::FromBuffer(buf, lutis::nmagick::PNG);
+        if (nmagick == nullptr) {
+            Napi::TypeError::New(env, "error initialize nmagick").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        // operations
-        try 
-        {
-            Magick::Geometry size = Magick::Geometry(height*factor, width*factor);
-            image.zoom(size);
-        } catch(Magick::Error& err)
-        {
-            Napi::TypeError::New(env, "error resize buffer").ThrowAsJavaScriptException();
+        lutis::type::Byte* out_data = nullptr;
+        size_t out_size;
+
+        int resize_ok = nmagick->Resize(width, height, factor, &out_data, &out_size);
+        if (resize_ok != 0) {
+            Napi::TypeError::New(env, "error resize with nmagick").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        Magick::Blob blobOut;
-        image.magick("PNG");
-        image.write(&blobOut);
+        delete[] out_data;
+        delete nmagick;
 
-        lutis::type::Byte datas[blobOut.length()];
-        memcpy(datas, blobOut.data(), blobOut.length());
-
-        return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, out_size);
     }
 
     static Napi::Value DrawTextMagick(const Napi::CallbackInfo& info)
