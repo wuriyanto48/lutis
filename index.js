@@ -2,7 +2,7 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'pp.webp';
+let filePath = 'jpg_to_webp.webp';
 
 let res = lutis.randomPixelJpeg(5, 5);
 fs.writeFile('out.jpeg', res, 'binary', (err) => {
@@ -64,7 +64,9 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
 //         // let res = lutis.resizeMagick(100, 800, 0.5, data);
         
 //         // let res = lutis.drawTextMagick('hello world', data);
-//         let res = lutis.decodeWebp(data);
+//         let res = lutis.grayFilterWebp(data);
+
+//         // let res = lutis.jpegToWebp(data);
 //         console.log(res);
 //         fs.writeFile('out.webp', res, 'binary', (err) => {
 //             if (err) {
