@@ -501,11 +501,7 @@ namespace lutis
         for (int j = 0; j != image_height; j++) 
         {
             for (int i = 0; i != image_width*channel; i++)
-            {
-                
-                random_pixel_buffer[i + j * image_width * channel] = rand() % 256;
-                // printf(" -- h: %d | w: %d c: %d in: %d\n", i, j, rand() % 256, (i + j * image_width * channel));
-            }   
+                random_pixel_buffer[(j * image_width * channel) + i] = rand() % 256; 
         }
 
         lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, channel);
@@ -553,6 +549,14 @@ namespace lutis
             Napi::TypeError::New(env, "read jpeg data to buffer").ThrowAsJavaScriptException();
             return env.Null();
         }
+
+        // auto p_data = input_jpeg->PixelData();
+        
+        // for (int i = 0; i < p_data.size(); i++)
+        // {
+        //     printf("i: %d\n", i);
+        //     p_data[i].Debug();
+        // }
 
         std::vector<lutis::type::Byte> gray_pixel = input_jpeg->ToGrayPixel();
         
