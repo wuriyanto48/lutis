@@ -15,7 +15,7 @@
 
 namespace lutis
 {
-    static Napi::Value DecodeWebp(const Napi::CallbackInfo& info)
+    static Napi::Value GrayFilterWebp(const Napi::CallbackInfo& info)
     {
         Napi::Env env = info.Env();
 
@@ -647,7 +647,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "rotateMagick"), Napi::Function::New(env, RotateMagick));
         exports.Set(Napi::String::New(env, "resizeMagick"), Napi::Function::New(env, ResizeMagick));
         exports.Set(Napi::String::New(env, "drawTextMagick"), Napi::Function::New(env, DrawTextMagick));
-        exports.Set(Napi::String::New(env, "decodeWebp"), Napi::Function::New(env, DecodeWebp));
+        exports.Set(Napi::String::New(env, "grayFilterWebp"), Napi::Function::New(env, GrayFilterWebp));
         exports.Set(Napi::String::New(env, "randomPixelJpeg"), Napi::Function::New(env, RandomPixelJpeg));
         exports.Set(Napi::String::New(env, "grayFilterJpeg"), Napi::Function::New(env, GrayFilterJpeg));
         exports.Set(Napi::String::New(env, "jpegToWebp"), Napi::Function::New(env, JpegToWebp));
