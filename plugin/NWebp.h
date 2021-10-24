@@ -44,17 +44,12 @@ namespace lutis
                 return original_length;
             }
 
-            void ReadOriginalLength(size_t _length)
-            {
-                original_length = _length;
-            }
-
             WEBP_CSP_MODE ColorSpace() const
             {
                 return colorspace;
             }
 
-            int ToBuffer(lutis::type::Byte** out)
+            int ToBuffer(lutis::type::Byte** out, size_t* out_size)
             {
                 WebPConfig webpconfig;
                 WebPPicture webpicture;
@@ -115,6 +110,8 @@ namespace lutis
                 printf("original_length: %lu\n", original_length);
                 *out = new lutis::type::Byte[writer.size];
                 std::memcpy(*out, writer.mem, writer.size);
+
+                *out_size = writer.size;
 
                 FreeWebp(&webpicture, &writer);
 

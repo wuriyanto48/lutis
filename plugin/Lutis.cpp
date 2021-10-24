@@ -66,8 +66,9 @@ namespace lutis
         memcpy(gray_data, gray_pixel.data(), gray_pixel.size());
 
         nw->Read(&gray_data);
+        size_t output_webp_size;
 
-        int encode_ok = nw->ToBuffer(&out_data);
+        int encode_ok = nw->ToBuffer(&out_data, &output_webp_size);
         if (encode_ok != 0)
         {
             Napi::TypeError::New(env, "error encode webp to buffer").ThrowAsJavaScriptException();
@@ -77,7 +78,7 @@ namespace lutis
         delete nw;
         delete[] out_data;
 
-        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, nw->OriginalLength());
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, output_webp_size);
     }
 
     static Napi::Value RotateMagick(const Napi::CallbackInfo& info)
@@ -611,18 +612,17 @@ namespace lutis
 
         // webp
         lutis::nwebp::NWebp* output_webp = new lutis::nwebp::NWebp(input_jpeg->Width(), 
-            input_jpeg->Height(), input_jpeg->Channel(), input_jpeg->Height()*input_jpeg->Channel(), 70);
+            input_jpeg->Height(), input_jpeg->Channel(), input_jpeg->Width()*input_jpeg->Channel(), 40);
 
         lutis::type::Byte* jpg_rgb_data = input_jpeg->Data();
 
         lutis::type::Byte* rgb_data = new lutis::type::Byte[input_jpeg->Height()*input_jpeg->Width()*input_jpeg->Channel()];
         memcpy(rgb_data, jpg_rgb_data, input_jpeg->Height()*input_jpeg->Width()*input_jpeg->Channel());
 
-        size_t webp_length = input_jpeg->Length()/2;
-        output_webp->ReadOriginalLength(webp_length);
         output_webp->Read(&rgb_data);
+        size_t output_webp_size; 
 
-        int write_res = output_webp->ToBuffer(&out_data);
+        int write_res = output_webp->ToBuffer(&out_data, &output_webp_size);
         if (write_res != 0)
         {
             delete[] out_data;
@@ -635,7 +635,7 @@ namespace lutis
         delete input_jpeg;
         delete output_webp;
 
-        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, input_jpeg->Length());
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, output_webp_size);
     }
 
     Napi::Object Init(Napi::Env env, Napi::Object exports)
