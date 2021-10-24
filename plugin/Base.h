@@ -14,108 +14,108 @@ namespace lutis
         
         class NBase
         {
-            protected:
-                uint32_t width;
-                uint32_t height;
-                uint32_t channel;
-                size_t length;
-                lutis::type::Byte* data;
-                std::vector<lutis::type::Color> pixel_data;
-            
-            public:
-                NBase(uint32_t width, uint32_t height, uint32_t channel)
-                {
-                    this->width = width;
-                    this->height = height;
-                    this->channel = channel;
+        protected:
+            uint32_t width;
+            uint32_t height;
+            uint32_t channel;
+            size_t length;
+            lutis::type::Byte* data;
+            std::vector<lutis::type::Color> pixel_data;
+        
+        public:
+            NBase(uint32_t width, uint32_t height, uint32_t channel)
+            {
+                this->width = width;
+                this->height = height;
+                this->channel = channel;
 
-                    data = nullptr;
-                }
+                data = nullptr;
+            }
 
-                lutis::type::Byte* Data() 
-                {
-                    return data;
-                }
+            lutis::type::Byte* Data() 
+            {
+                return data;
+            }
 
-                uint32_t Width() const
-                {
-                    return width;
-                }
+            uint32_t Width() const
+            {
+                return width;
+            }
 
-                uint32_t Height() const
-                {
-                    return height;
-                }
+            uint32_t Height() const
+            {
+                return height;
+            }
 
-                uint32_t Channel() const
-                {
-                    return channel;
-                }
+            uint32_t Channel() const
+            {
+                return channel;
+            }
 
-                size_t Length() const
-                {
-                    return length;
-                }
+            size_t Length() const
+            {
+                return length;
+            }
 
-                void Read(lutis::type::Byte** data)
-                {
-                    if (data != nullptr)
-                        this->data = *data;
-                }
+            void Read(lutis::type::Byte** data)
+            {
+                if (data != nullptr)
+                    this->data = *data;
+            }
 
-                // simple formula to take each 3 flat pixel data and put it to struct
-                // https://play.golang.org/p/CntT9L67Dxy
-                const std::vector<lutis::type::Color>& PixelData()
-                {
-                    if (data == nullptr)
-                        return pixel_data;
-
-                    for (int h = 0; h != height; h++) 
-                    {
-                        for (int w = 0; w != width; w++)
-                        {
-                            struct lutis::type::Color c;
-                            c.R = data[(h*width*channel)+(w*channel)+0];
-                            c.G = data[(h*width*channel)+(w*channel)+1];
-                            c.B = data[(h*width*channel)+(w*channel)+2];
-
-                            if (channel == 4)
-                                c.A = data[(h*width*channel)+(w*channel)+3];
-
-                            pixel_data.push_back(c);
-                        }
-
-                    }
+            // simple formula to take each 3 flat pixel data and put it to struct
+            // https://play.golang.org/p/CntT9L67Dxy
+            const std::vector<lutis::type::Color>& PixelData()
+            {
+                if (data == nullptr)
                     return pixel_data;
-                }
 
-                // http://en.wikipedia.org/wiki/Luma_%28video%29
-                // basic grayscale filter
-                std::vector<lutis::type::Byte> ToGrayPixel()
+                for (int h = 0; h != height; h++) 
                 {
-                    auto p_data = PixelData();
-                    std::vector<lutis::type::Byte> flat_pixel;
-                    
-                    for (int i = 0; i < p_data.size(); i++)
+                    for (int w = 0; w != width; w++)
                     {
-                        auto c = p_data[i];
+                        struct lutis::type::Color c;
+                        c.R = data[(h*width*channel)+(w*channel)+0];
+                        c.G = data[(h*width*channel)+(w*channel)+1];
+                        c.B = data[(h*width*channel)+(w*channel)+2];
 
-                        float red = (float) c.R * 0.299;
-                        float green = (float) c.G * 0.587;
-                        float blue = (float)c.B * 0.114;
-
-                        // gray pixel
-                        lutis::type::Byte gray = (lutis::type::Byte) (red + green + blue);
-
-                        flat_pixel.push_back(gray);
-                        flat_pixel.push_back(gray);
-                        flat_pixel.push_back(gray);
                         if (channel == 4)
-                            flat_pixel.push_back((lutis::type::Byte) c.A);
+                            c.A = data[(h*width*channel)+(w*channel)+3];
+
+                        pixel_data.push_back(c);
                     }
 
-                    return flat_pixel;
                 }
+                return pixel_data;
+            }
+
+            // http://en.wikipedia.org/wiki/Luma_%28video%29
+            // basic grayscale filter
+            std::vector<lutis::type::Byte> ToGrayPixel()
+            {
+                auto p_data = PixelData();
+                std::vector<lutis::type::Byte> flat_pixel;
+                
+                for (int i = 0; i < p_data.size(); i++)
+                {
+                    auto c = p_data[i];
+
+                    float red = (float) c.R * 0.299;
+                    float green = (float) c.G * 0.587;
+                    float blue = (float)c.B * 0.114;
+
+                    // gray pixel
+                    lutis::type::Byte gray = (lutis::type::Byte) (red + green + blue);
+
+                    flat_pixel.push_back(gray);
+                    flat_pixel.push_back(gray);
+                    flat_pixel.push_back(gray);
+                    if (channel == 4)
+                        flat_pixel.push_back((lutis::type::Byte) c.A);
+                }
+
+                return flat_pixel;
+            }
         };
     }
 }
