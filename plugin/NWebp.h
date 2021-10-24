@@ -24,6 +24,7 @@ namespace lutis
             {
                 this->stride = stride;
                 this->quality_factor = quality_factor;
+                this->original_length = 0;
             }
 
             ~NWebp()
