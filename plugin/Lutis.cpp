@@ -575,6 +575,69 @@ namespace lutis
         return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, input_jpeg->Length());
     }
 
+    static Napi::Value JpegToWebp(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 1)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsBuffer())
+        {
+            Napi::TypeError::New(env, "second argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        lutis::type::Byte* out_data = nullptr;
+
+        auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
+
+        lutis::njpeg::NJpeg* input_jpeg = lutis::njpeg::NJpeg::FromBuffer(buf);
+        if (input_jpeg == nullptr)
+        {
+            Napi::TypeError::New(env, "read jpeg data to buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        // std::vector<lutis::type::Byte> gray_pixel = input_jpeg->ToGrayPixel();
+        
+        // lutis::type::Byte* gray_data = new lutis::type::Byte[gray_pixel.size()];
+        // memcpy(gray_data, gray_pixel.data(), gray_pixel.size());
+
+        // input_jpeg->Read(&gray_data);
+
+        // webp
+        lutis::nwebp::NWebp* output_webp = new lutis::nwebp::NWebp(input_jpeg->Width(), 
+            input_jpeg->Height(), input_jpeg->Channel(), input_jpeg->Height()*input_jpeg->Channel(), 70);
+
+        lutis::type::Byte* jpg_rgb_data = input_jpeg->Data();
+
+        lutis::type::Byte* rgb_data = new lutis::type::Byte[input_jpeg->Height()*input_jpeg->Width()*input_jpeg->Channel()];
+        memcpy(rgb_data, jpg_rgb_data, input_jpeg->Height()*input_jpeg->Width()*input_jpeg->Channel());
+
+        size_t webp_length = input_jpeg->Length()/2;
+        output_webp->ReadOriginalLength(webp_length);
+        output_webp->Read(&rgb_data);
+
+        int write_res = output_webp->ToBuffer(&out_data);
+        if (write_res != 0)
+        {
+            delete[] out_data;
+            delete input_jpeg;
+            Napi::TypeError::New(env, "error writing jpeg data").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        delete[] out_data;
+        delete input_jpeg;
+        delete output_webp;
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, input_jpeg->Length());
+    }
+
     Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         exports.Set(Napi::String::New(env, "inspect"), Napi::Function::New(env, Inspect));
@@ -587,6 +650,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "decodeWebp"), Napi::Function::New(env, DecodeWebp));
         exports.Set(Napi::String::New(env, "randomPixelJpeg"), Napi::Function::New(env, RandomPixelJpeg));
         exports.Set(Napi::String::New(env, "grayFilterJpeg"), Napi::Function::New(env, GrayFilterJpeg));
+        exports.Set(Napi::String::New(env, "jpegToWebp"), Napi::Function::New(env, JpegToWebp));
         return exports;
     }
 
