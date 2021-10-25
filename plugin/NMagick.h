@@ -37,7 +37,7 @@ namespace lutis
             }
         }
 
-
+        // https://www.imagemagick.org/Magick++/Documentation.html
         class NMagick
         {
             public:
@@ -86,6 +86,73 @@ namespace lutis
                 {
                     Magick::Geometry size(height*factor, width*factor);
                     image.zoom(size);
+                } catch(Magick::Error& err)
+                {
+                    return -1;
+                }
+
+                Magick::Blob blob_out;
+                image.magick(GetFormatStr(format));
+                image.write(&blob_out);
+
+                *out_buffer = new lutis::type::Byte[blob_out.length()];
+                *out_size = blob_out.length();
+                memcpy(*out_buffer, blob_out.data(), blob_out.length());
+
+                return 0;
+
+            }
+
+            int Rotate(double angle, lutis::type::Byte** out_buffer, size_t* out_size)
+            {
+                try 
+                {
+                    image.rotate(angle);
+                } catch(Magick::Error& err)
+                {
+                    return -1;
+                }
+
+                Magick::Blob blob_out;
+                image.magick(GetFormatStr(format));
+                image.write(&blob_out);
+
+                *out_buffer = new lutis::type::Byte[blob_out.length()];
+                *out_size = blob_out.length();
+                memcpy(*out_buffer, blob_out.data(), blob_out.length());
+
+                return 0;
+
+            }
+
+            int DrawText(const std::string& text, const std::string& font, uint32_t text_width, 
+                uint32_t text_height, const lutis::type::Vector2& pos, 
+                const lutis::type::Color& text_color, 
+                lutis::type::Byte** out_buffer, size_t* out_size)
+            {
+                // operations
+                try 
+                {
+                    // std::vector<Magick::Drawable> textDrawList;
+                    // // set the text font: the font is specified via a string representing
+                    // // a fully qualified X font name (wildcards '*' are allowed)
+                    // textDrawList.push_back(Magick::DrawableFont("-misc-fixed-medium-o-semicondensed—13-*-*-*-c-60-iso8859-1"));
+                    // // set the text to be drawn at specified position: x=101, y=50 this case
+                    // textDrawList.push_back( Magick::DrawableText(100, 100, text));
+                    // // set the text color (the fill color must be set to transparent)
+                    // textDrawList.push_back( Magick::DrawableStrokeColor(Magick::Color("black")));
+                    // textDrawList.push_back( Magick::DrawableFillColor(Magick::Color("red")));
+
+                    // image.draw(textDrawList);
+
+                    // // Set draw options 
+                    // image.strokeColor("red"); // Outline color 
+                    
+                    image.fillColor(Magick::ColorRGB(text_color.R, text_color.G, text_color.B)); // Fill color 
+                    image.fontFamily(font);
+                    image.fontPointsize(100);
+                    Magick::Geometry place = Magick::Geometry(text_width, text_height, pos.x, pos.y);
+                    image.annotate(text, place);
                 } catch(Magick::Error& err)
                 {
                     return -1;

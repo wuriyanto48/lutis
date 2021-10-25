@@ -22,6 +22,11 @@ namespace lutis
 
         } c_rgb;
 
+        struct Vector2 { 
+            ssize_t x; 
+            ssize_t y; 
+        } position_t;
+
         struct InspectData {
             size_t sizeKB;
             size_t colorChannelSize;
