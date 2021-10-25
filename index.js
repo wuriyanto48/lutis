@@ -2,9 +2,9 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 'jpg_to_webp.webp';
+let filePath = 're2.jpeg';
 
-let res = lutis.randomPixelJpeg(5, 5);
+let res = lutis.randomPixelJpeg(20, 10);
 fs.writeFile('out.jpeg', res, 'binary', (err) => {
     if (err) {
         console.log('error... ', err);
@@ -61,14 +61,15 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
             
 //         // });
 
-//         // let res = lutis.resizeMagick(100, 800, 0.5, data);
+//         // let res = lutis.resizeMagick(200, 100, 2, data);
+//         // let res = lutis.rotateMagick(90, data);
         
-//         // let res = lutis.drawTextMagick('hello world', data);
-//         let res = lutis.grayFilterWebp(data);
+//         let res = lutis.drawTextMagick('hello world', 'Arial', data, 50, 50, {x: 50, y: 50}, {R:245, G:245, B:73});
+//         // let res = lutis.grayFilterWebp(data);
 
 //         // let res = lutis.jpegToWebp(data);
 //         console.log(res);
-//         fs.writeFile('out.webp', res, 'binary', (err) => {
+//         fs.writeFile('out_text.png', res, 'binary', (err) => {
 //             if (err) {
 //                 console.log(err);
 //             }
