@@ -22,6 +22,18 @@ namespace lutis
             BMP = 3
         };
 
+        const static std::unordered_map<std::string, int> string_to_format_case
+        ({
+            {"JPEG", 1},
+            {"jpeg", 2},
+            {"JPG", 3},
+            {"jpg", 4},
+            {"PNG", 5},
+            {"png", 6},
+            {"BMP", 7},
+            {"bmp", 8}
+        });
+
         std::string GetFormatStr(NMagickFormat format)
         {
             switch (format)
@@ -34,6 +46,26 @@ namespace lutis
                 return "BMP";
             default:
                 return "JPEG";
+            }
+        }
+
+        NMagickFormat GetFormat(const std::string& format_str)
+        {
+            switch (string_to_format_case.at(format_str))
+            {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+                return JPEG;
+            case 5:
+            case 6:
+                return PNG;
+            case 7:
+            case 8:
+                return BMP;
+            default:
+                return JPEG;
             }
         }
 

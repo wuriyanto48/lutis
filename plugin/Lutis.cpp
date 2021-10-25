@@ -192,7 +192,7 @@ namespace lutis
     {
         Napi::Env env = info.Env();
 
-        if (info.Length() < 7)
+        if (info.Length() < 8)
         {
             Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
             return env.Null();
@@ -240,6 +240,12 @@ namespace lutis
             return env.Null();
         }
 
+        if (!info[7].IsString())
+        {
+            Napi::TypeError::New(env, "eighth argument should be string").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
         Napi::String text = info[0].As<Napi::String>();
         Napi::String font = info[1].As<Napi::String>();
         auto buf = info[2].As<Napi::Buffer<lutis::type::Byte>>();
@@ -258,7 +264,9 @@ namespace lutis
         lutis::type::c_rgb.G = color_object.Get("G").As<Napi::Number>().DoubleValue();
         lutis::type::c_rgb.R = color_object.Get("R").As<Napi::Number>().DoubleValue();
 
-        lutis::nmagick::NMagick* nmagick = lutis::nmagick::NMagick::FromBuffer(buf, lutis::nmagick::PNG);
+        Napi::String picture_format = info[7].As<Napi::String>();
+
+        lutis::nmagick::NMagick* nmagick = lutis::nmagick::NMagick::FromBuffer(buf, lutis::nmagick::GetFormat(picture_format));
         if (nmagick == nullptr) {
             Napi::TypeError::New(env, "error initialize nmagick").ThrowAsJavaScriptException();
             return env.Null();
