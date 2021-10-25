@@ -64,7 +64,7 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
 //         // let res = lutis.resizeMagick(200, 100, 2, data);
 //         // let res = lutis.rotateMagick(90, data);
         
-//         let res = lutis.drawTextMagick('hello world', 'Arial', data, 50, 50, {x: 50, y: 50}, {R:245, G:245, B:73});
+//         let res = lutis.drawTextMagick('hello world', 'Arial', data, 50, 50, {x: 50, y: 50}, {R:245, G:245, B:73}, "png");
 //         // let res = lutis.grayFilterWebp(data);
 
 //         // let res = lutis.jpegToWebp(data);
