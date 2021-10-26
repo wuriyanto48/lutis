@@ -7,7 +7,6 @@
 #include <string>
 #include <iostream>
 #include "Type.h"
-#include "Base.h"
 
 namespace lutis 
 {
@@ -157,7 +156,7 @@ namespace lutis
 
             }
 
-            int DrawText(const std::string& text, const std::string& font, uint32_t text_width, 
+            int DrawText(const std::string& text, const std::string& font, double text_size, uint32_t text_width, 
                 uint32_t text_height, const lutis::type::Vector2& pos, 
                 const lutis::type::Color& text_color, 
                 lutis::type::Byte** out_buffer, size_t* out_size)
@@ -182,7 +181,7 @@ namespace lutis
                     
                     image.fillColor(Magick::ColorRGB(text_color.R, text_color.G, text_color.B)); // Fill color 
                     image.fontFamily(font);
-                    image.fontPointsize(100);
+                    image.fontPointsize(text_size);
                     Magick::Geometry place = Magick::Geometry(text_width, text_height, pos.x, pos.y);
                     image.annotate(text, place);
                 } catch(Magick::Error& err)

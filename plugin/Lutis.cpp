@@ -192,7 +192,7 @@ namespace lutis
     {
         Napi::Env env = info.Env();
 
-        if (info.Length() < 8)
+        if (info.Length() < 9)
         {
             Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
             return env.Null();
@@ -210,15 +210,15 @@ namespace lutis
             return env.Null();
         }
 
-        if (!info[2].IsBuffer())
+        if (!info[2].IsNumber())
         {
-            Napi::TypeError::New(env, "third argument should be buffer").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "third argument should be number").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        if (!info[3].IsNumber())
+        if (!info[3].IsBuffer())
         {
-            Napi::TypeError::New(env, "fourth argument should be number").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "fourth argument should be buffer").ThrowAsJavaScriptException();
             return env.Null();
         }
 
@@ -228,43 +228,50 @@ namespace lutis
             return env.Null();
         }
 
-        if (!info[5].IsObject())
+        if (!info[5].IsNumber())
         {
-            Napi::TypeError::New(env, "sixth argument should be object of color").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "seventh argument should be number").ThrowAsJavaScriptException();
             return env.Null();
         }
 
         if (!info[6].IsObject())
         {
-            Napi::TypeError::New(env, "seventh argument should be object of color").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "eighth argument should be object of color").ThrowAsJavaScriptException();
             return env.Null();
         }
 
-        if (!info[7].IsString())
+        if (!info[7].IsObject())
         {
-            Napi::TypeError::New(env, "eighth argument should be string").ThrowAsJavaScriptException();
+            Napi::TypeError::New(env, "nineth argument should be object of color").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[8].IsString())
+        {
+            Napi::TypeError::New(env, "tenth argument should be string").ThrowAsJavaScriptException();
             return env.Null();
         }
 
         Napi::String text = info[0].As<Napi::String>();
         Napi::String font = info[1].As<Napi::String>();
-        auto buf = info[2].As<Napi::Buffer<lutis::type::Byte>>();
+        double text_size = info[2].As<Napi::Number>().DoubleValue();
+        auto buf = info[3].As<Napi::Buffer<lutis::type::Byte>>();
 
-        uint32_t text_width = info[3].As<Napi::Number>().Uint32Value();
-        uint32_t text_height = info[4].As<Napi::Number>().Uint32Value();
+        uint32_t text_width = info[4].As<Napi::Number>().Uint32Value();
+        uint32_t text_height = info[5].As<Napi::Number>().Uint32Value();
 
-        Napi::Object position_object = info[5].As<Napi::Object>();
+        Napi::Object position_object = info[6].As<Napi::Object>();
 
         lutis::type::position_t.x = position_object.Get("x").As<Napi::Number>().Int64Value();
         lutis::type::position_t.y = position_object.Get("y").As<Napi::Number>().Int64Value();
 
-        Napi::Object color_object = info[6].As<Napi::Object>();
+        Napi::Object color_object = info[7].As<Napi::Object>();
 
         lutis::type::c_rgb.B = color_object.Get("B").As<Napi::Number>().DoubleValue();
         lutis::type::c_rgb.G = color_object.Get("G").As<Napi::Number>().DoubleValue();
         lutis::type::c_rgb.R = color_object.Get("R").As<Napi::Number>().DoubleValue();
 
-        Napi::String picture_format = info[7].As<Napi::String>();
+        Napi::String picture_format = info[8].As<Napi::String>();
 
         lutis::nmagick::NMagick* nmagick = lutis::nmagick::NMagick::FromBuffer(buf, lutis::nmagick::GetFormat(picture_format));
         if (nmagick == nullptr) {
@@ -275,7 +282,7 @@ namespace lutis
         lutis::type::Byte* out_data = nullptr;
         size_t out_size;
 
-        int draw_ok = nmagick->DrawText(text, font, text_width, text_height, lutis::type::position_t, lutis::type::c_rgb, &out_data, &out_size);
+        int draw_ok = nmagick->DrawText(text, font, text_size, text_width, text_height, lutis::type::position_t, lutis::type::c_rgb, &out_data, &out_size);
         if (draw_ok != 0) {
             Napi::TypeError::New(env, "error draw text with nmagick").ThrowAsJavaScriptException();
             return env.Null();
