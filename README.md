@@ -10,7 +10,7 @@ An Experimental C/C++ Graphics Lib binding with `Nodejs`
 - cmake https://cmake.org/download/
 - cmake-js https://github.com/cmake-js/cmake-js
 
-### Current C/C++ Graphics dependencies
+### Current C/C++ Graphics and other dependencies
 - OpenCV https://github.com/opencv/opencv
 - OpenCV Contrib https://github.com/opencv/opencv_contrib
 - ImageMagick https://github.com/ImageMagick/ImageMagick.git
