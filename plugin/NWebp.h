@@ -16,6 +16,12 @@ namespace lutis
     namespace nwebp
     {
 
+        static void FreeWebp(WebPPicture* pic, WebPMemoryWriter* writer)
+        {
+            WebPMemoryWriterClear(writer);
+            WebPPictureFree(pic);
+        }
+
         class NWebp : public lutis::base::NBase
         {
         public:
@@ -172,13 +178,7 @@ namespace lutis
             float quality_factor;
             WEBP_CSP_MODE colorspace;
             size_t original_length;
-        
-        private:
-            void FreeWebp(WebPPicture* pic, WebPMemoryWriter* writer)
-            {
-                WebPMemoryWriterClear(writer);
-                WebPPictureFree(pic);
-            }
+            
         };
     }
 }
