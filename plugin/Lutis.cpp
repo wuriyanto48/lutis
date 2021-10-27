@@ -9,10 +9,10 @@
 #include "Core.h"
 #include "Draw.h"
 #include "Type.h"
-#include "Filter.h"
 #include "NJpeg.h"
 #include "NWebp.h"
 #include "NMagick.h"
+#include "NOpenCv.h"
 
 namespace lutis
 {
@@ -322,40 +322,6 @@ namespace lutis
         return Napi::Buffer<lutis::type::Byte>::Copy(env, datas, sizeof(datas));
     }
 
-    static Napi::Value Inspect(const Napi::CallbackInfo& info)
-    {
-        Napi::Env env = info.Env();
-
-        if (info.Length() < 1)
-        {
-            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
-            return env.Null();
-        }
-
-        if (!info[0].IsBuffer())
-        {
-            Napi::TypeError::New(env, "argument should be buffer").ThrowAsJavaScriptException();
-            return env.Null();
-        }
-
-        auto buf = info[0].As<Napi::Buffer<lutis::type::Byte>>();
-
-        lutis::type::InspectData inspectData;
-        int inspectResult = lutis::core::Inspect(buf, inspectData);
-        if (inspectResult != 0)
-        {
-            Napi::TypeError::New(env, "error inspecting data").ThrowAsJavaScriptException();
-            return env.Null();
-        }
-
-        Napi::Object inspectObject = Napi::Object::New(env);
-        inspectObject.Set("sizeKB", inspectData.sizeKB);
-        inspectObject.Set("colorChannelSize", inspectData.colorChannelSize);
-        inspectObject.Set("totalArrayElement", inspectData.totalArrayElement);
-
-        return inspectObject;
-    }
-
     static void GaussianBlur(const Napi::CallbackInfo& info)
     {
         Napi::Env env = info.Env();
@@ -387,20 +353,19 @@ namespace lutis
         Napi::Function callback = info[2].As<Napi::Function>();
 
         Napi::String format = info[0].As<Napi::String>();
-        Napi::Buffer<lutis::type::Byte> buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
+        auto buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
         std::vector<lutis::type::Byte> out;
-        int gaussianBlurRes = lutis::filter::GaussianBlur(format, buf, out);
-        if (gaussianBlurRes != 0)
+
+        lutis::ncv::NCv* ncv = lutis::ncv::NCv::FromBuffer(buf);
+        if (ncv == nullptr)
+            callback.Call(env.Global(), { Napi::String::New(env, "error initialize ncv"), env.Null() });
+
+        int blur_ok = lutis::filter::GaussianBlur(format, buf, out);
+        if (blur_ok != 0)
             callback.Call(env.Global(), { Napi::String::New(env, "error execute gaussian blur"), env.Null() });
 
-        // lutis::type::Byte dataOuts[buf.Length()];
-        // for (size_t index = 0; index < buf.Length(); index++) {
-        //     // printf("array[%lu] = %d\n", index, out[index]);
-        //     dataOuts[index] = out[index];
-        // }
-
-        // // free memory
-        // lutis::core::CleanUp(&out);
+        // free memory
+        delete ncv;
 
         callback.Call(env.Global(), {
             env.Null(), 
@@ -659,7 +624,6 @@ namespace lutis
 
     Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
-        exports.Set(Napi::String::New(env, "inspect"), Napi::Function::New(env, Inspect));
         exports.Set(Napi::String::New(env, "gaussianBlur"), Napi::Function::New(env, GaussianBlur));
         exports.Set(Napi::String::New(env, "drawCircle"), Napi::Function::New(env, DrawCircle));
         exports.Set(Napi::String::New(env, "drawMagick"), Napi::Function::New(env, DrawMagick));
