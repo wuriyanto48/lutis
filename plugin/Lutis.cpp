@@ -6,8 +6,6 @@
 #include <Magick++.h>
 #include <webp/decode.h>
 #include <jpeglib.h>
-#include "Core.h"
-#include "Draw.h"
 #include "Type.h"
 #include "NJpeg.h"
 #include "NWebp.h"
@@ -360,7 +358,7 @@ namespace lutis
         if (ncv == nullptr)
             callback.Call(env.Global(), { Napi::String::New(env, "error initialize ncv"), env.Null() });
 
-        int blur_ok = lutis::filter::GaussianBlur(format, buf, out);
+        int blur_ok = ncv->GaussianBlur(format, out);
         if (blur_ok != 0)
             callback.Call(env.Global(), { Napi::String::New(env, "error execute gaussian blur"), env.Null() });
 
@@ -434,9 +432,15 @@ namespace lutis
 
         std::vector<lutis::type::Byte> out;
 
-        int drawElipseRes = lutis::draw::DrawElipse(format, lutis::type::c_rgb, width, height, angle, out);
-        if (drawElipseRes != 0)
+        lutis::ncv::NCv* ncv = new lutis::ncv::NCv();
+        if (ncv == nullptr)
+            callback.Call(env.Global(), { Napi::String::New(env, "error initialize ncv"), env.Null() });
+
+        int draw_ok = ncv->DrawElipse(format, lutis::type::c_rgb, width, height, angle, out);
+        if (draw_ok != 0)
             callback.Call(env.Global(), { Napi::String::New(env, "error execute draw elipse blur"), env.Null() });
+
+        delete ncv;
 
         callback.Call(env.Global(), {
             env.Null(), 

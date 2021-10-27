@@ -4,6 +4,7 @@
 #include <napi.h>
 #include <Magick++.h>
 #include <vector>
+#include <unordered_map>
 #include <string>
 #include <iostream>
 #include "Type.h"
