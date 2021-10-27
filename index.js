@@ -2,7 +2,7 @@ const lutis = require('./lib');
 
 const fs = require('fs');
 
-let filePath = 're2.jpeg';
+let filePath = 'pp.jpg';
 
 let res = lutis.randomPixelJpeg(20, 10);
 fs.writeFile('out.jpeg', res, 'binary', (err) => {
@@ -12,6 +12,20 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
         console.log(res);
     }
 });
+
+//  lutis.drawCircle('.png', 400, 400, 90, {R:245, G:245, B:73}, (err, res) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         console.log(res.slice(0, 10));
+//         fs.writeFile('out_circle.png', res, 'binary', (err) => {
+//             if (err) {
+//                 console.log(err);
+//             }
+//         });
+//     }
+    
+// });
 
 // fs.readFile(filePath, null, (err, data) => {
 //     if (err) {
@@ -32,48 +46,41 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
 //         console.log(err);
 //     } else {
 
-//         // lutis.gaussianBlur('.png', data, (err, res) => {
-//         //     if (err) {
-//         //         console.log(err);
-//         //     } else {
-//         //         console.log(data.slice(0, 10));
-//         //         console.log(res.slice(0, 10));
-//         //         fs.writeFile('out.png', res, 'binary', (err) => {
-//         //             if (err) {
-//         //                 console.log(err);
-//         //             }
-//         //         });
-//         //     }
+//         lutis.gaussianBlur('.png', data, (err, res) => {
+//             if (err) {
+//                 console.log(err);
+//             } else {
+//                 console.log(data.slice(0, 10));
+//                 console.log(res.slice(0, 10));
+//                 fs.writeFile('out_blur.png', res, 'binary', (err) => {
+//                     if (err) {
+//                         console.log(err);
+//                     }
+//                 });
+//             }
             
-//         // });
-
-//         // lutis.drawCircle('.png', 400, 400, 90, {R:245, G:245, B:73}, (err, res) => {
-//         //     if (err) {
-//         //         console.log(err);
-//         //     } else {
-//         //         console.log(res.slice(0, 10));
-//         //         fs.writeFile('out.png', res, 'binary', (err) => {
-//         //             if (err) {
-//         //                 console.log(err);
-//         //             }
-//         //         });
-//         //     }
-            
-//         // });
+//         });
 
 //         // let res = lutis.resizeMagick(200, 100, 2, data);
 //         // let res = lutis.rotateMagick(90, data);
         
-//         let res = lutis.drawTextMagick('hello world', 'Arial', data, 50, 50, {x: 50, y: 50}, {R:245, G:245, B:73}, "png");
-//         // let res = lutis.grayFilterWebp(data);
+//         // let text = `Optionally the bitstream features can be read into config.input, 
+//         // in case we need to know them in advance. For instance it can handy to 
+//         // know whether the picture has some transparency at all. Note that this 
+//         // will also parse the bitstream's header, and is therefore a good way of 
+//         // knowing if the bitstream looks like a valid WebP one.`
+        
+//         // let text_size = 50;
+//         // let res = lutis.drawTextMagick(text, 'Impact', text_size, data, 50, 50, {x: 50, y: 50}, {R:245, G:245, B:73}, "png");
+//         // // let res = lutis.grayFilterWebp(data);
 
-//         // let res = lutis.jpegToWebp(data);
-//         console.log(res);
-//         fs.writeFile('out_text.png', res, 'binary', (err) => {
-//             if (err) {
-//                 console.log(err);
-//             }
-//         });
+//         // // let res = lutis.jpegToWebp(data);
+//         // console.log(res);
+//         // fs.writeFile('out_text.png', res, 'binary', (err) => {
+//         //     if (err) {
+//         //         console.log(err);
+//         //     }
+//         // });
 
 //         // fs.createWriteStream('out.png').write(res);
         
