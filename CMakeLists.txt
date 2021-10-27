@@ -10,9 +10,6 @@ include_directories(${CMAKE_JS_INC})
 set(HEADER_FILES
     plugin/Base.h
     plugin/Type.h
-    plugin/Draw.h
-    plugin/Filter.h
-    plugin/Core.h
     plugin/NJpeg.h
     plugin/NWebp.h
     plugin/NMagick.h
