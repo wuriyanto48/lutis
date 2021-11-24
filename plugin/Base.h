@@ -32,6 +32,8 @@ namespace lutis
                 data = nullptr;
             }
 
+            virtual ~NBase() = default;
+
             lutis::type::Byte* Data() 
             {
                 return data;

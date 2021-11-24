@@ -485,7 +485,13 @@ namespace lutis
         for (int j = 0; j != image_height; j++) 
         {
             for (int i = 0; i != image_width*channel; i++)
-                random_pixel_buffer[(j * image_width * channel) + i] = rand() % 256; 
+                if (i%2==0)
+                {
+                    random_pixel_buffer[(j * image_width * channel) + i] = 0; 
+                } else
+                {
+                    random_pixel_buffer[(j * image_width * channel) + i] = rand() % 256; 
+                }
         }
 
         lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, channel);
