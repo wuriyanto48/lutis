@@ -3,7 +3,7 @@ const lutis = require('./lib');
 const fs = require('fs');
 const { constants } = require('buffer');
 
-let filePath = 'imagedata/es.png';
+let filePath = './imagedata/es.png';
 
 // let res = lutis.randomPixelJpeg(20, 10);
 // fs.writeFile('out.jpeg', res, 'binary', (err) => {

@@ -35,5 +35,8 @@ jobs:
         run: make build-vendor
       - name: Build Project
         run: make build
+      - name: Check Build
+        run: |
+          ls build/
       - name: Run example
         run: node index.js
