@@ -677,8 +677,10 @@ namespace lutis
         }
         tess_api->SetPageSegMode(tesseract::PSM_AUTO);
 
-        tess_api->SetImage(ncv->Mat().data, ncv->Mat().cols, ncv->Mat().rows, 3, ncv->Mat().step );
+        tess_api->SetImage(ncv->Mat().data, ncv->Mat().cols, ncv->Mat().rows, 3, 3*ncv->Mat().cols);
         out_data = tess_api->GetUTF8Text();
+
+        tess_api->End();
         
         delete ncv;
         delete tess_api;
