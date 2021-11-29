@@ -1,17 +1,18 @@
 const lutis = require('./lib');
 
 const fs = require('fs');
+const { constants } = require('buffer');
 
-let filePath = 'pp.jpg';
+let filePath = 'es.png';
 
-let res = lutis.randomPixelJpeg(20, 10);
-fs.writeFile('out.jpeg', res, 'binary', (err) => {
-    if (err) {
-        console.log('error... ', err);
-    } else {
-        console.log(res);
-    }
-});
+// let res = lutis.randomPixelJpeg(20, 10);
+// fs.writeFile('out.jpeg', res, 'binary', (err) => {
+//     if (err) {
+//         console.log('error... ', err);
+//     } else {
+//         console.log(res);
+//     }
+// });
 
 //  lutis.drawCircle('.png', 400, 400, 90, {R:245, G:245, B:73}, (err, res) => {
 //     if (err) {
@@ -26,6 +27,16 @@ fs.writeFile('out.jpeg', res, 'binary', (err) => {
 //     }
     
 // });
+
+fs.readFile(filePath, null, (err, data) => {
+    if (err) {
+        console.log(err);
+    } else {
+        let tessdata_path = `${process.cwd()}/tessdata`;
+        let res = lutis.ocrScan(tessdata_path, data);
+        console.log(res);
+    }
+});
 
 // fs.readFile(filePath, null, (err, data) => {
 //     if (err) {
