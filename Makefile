@@ -11,7 +11,6 @@ build-vendor:
 	chmod +x ./scripts/leptonica && \
 	chmod +x ./scripts/tesseract && \
 	chmod +x ./scripts/download_tessdata \
-	&& ./scripts/opencv \
 	&& ./scripts/zlib \
 	&& ./scripts/png \
 	&& ./scripts/jpeg \
@@ -19,6 +18,7 @@ build-vendor:
 	&& ./scripts/imagemagick \
 	&& ./scripts/leptonica \
 	&& ./scripts/tesseract \
+	&& ./scripts/opencv \
 	&& ./scripts/download_tessdata \
 	&& echo 'finish build vendor and dependencies...'
 
