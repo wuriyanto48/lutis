@@ -128,6 +128,34 @@ find_package(ImageMagick REQUIRED COMPONENTS convert Magick++ MagickCore)
 # # Append all flags to CMAKE_CXX_FLAGS
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 ${MAGICK_CXX_FLAGS} ${MAGICK_LD_FLAGS}")
 
+# -------------------- Leptonica --------------------
+set(Leptonica_DIR ${PROJECT_SOURCE_DIR}/vendor/leptonica/lib/cmake/leptonica)
+set(Leptonica_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/leptonica/include/leptonica)
+# set(Leptonica_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/vendor/leptonica/include/leptonica)
+set(Leptonica_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/leptonica/lib/libleptonica.${DYNAMIC_LIB_EXT})
+
+add_definitions( ${PNG_DEFINITIONS} )
+# enable JPEG
+add_definitions( -DHAVE_LIBJPEG=1 )
+
+# enable PNG
+add_definitions( -DHAVE_LIBPNG=1 )
+
+# enable WebP
+add_definitions( -DHAVE_LIBWEBP=1 )
+
+# enable Zlib
+add_definitions( -DHAVE_LIBZ=1 )
+
+find_package(Leptonica REQUIRED)
+
+# -------------------- Tesseract --------------------
+set(Tesseract_DIR ${PROJECT_SOURCE_DIR}/vendor/tesseract/lib/cmake/tesseract)
+set(Tesseract_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/tesseract/include/tesseract/)
+set(Tesseract_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/tesseract/lib/libtesseract.${DYNAMIC_LIB_EXT})
+
+find_package( Tesseract REQUIRED ) # 3.05 is currently the latest version of the git repository.
+
 # -------------------- OPEN CV --------------------
 
 # set OpenCV_DIR variable equal to the path to the cmake
@@ -151,6 +179,8 @@ include_directories( ${OpenCV_INCLUDE_DIRS}
         ${JPEG_INCLUDE_DIR} 
         ${ZLIB_INCLUDE_DIR} 
         ${PNG_INCLUDE_DIRS}
+        ${Leptonica_INCLUDE_DIRS}
+        ${Tesseract_INCLUDE_DIRS}
 )
 
 add_library(${PROJECT_NAME} SHARED 
@@ -171,6 +201,8 @@ target_link_libraries(${PROJECT_NAME}
         ${ZLIB_LIBRARY} 
         JPEG::JPEG 
         ${PNG_LIBRARIES}
+        ${Leptonica_LIBRARY}
+        ${Tesseract_LIBRARY}
 )
 
 # Include Node-API wrappers
@@ -208,6 +240,14 @@ MESSAGE( [Main] " DYNAMIC_LIB_EXT = ${DYNAMIC_LIB_EXT}")
 
 MESSAGE( [Main] " OpenCV_INCLUDE_DIRS = ${OpenCV_INCLUDE_DIRS}")
 MESSAGE( [Main] " OpenCV_LIBS = ${OpenCV_LIBS}")
+
+MESSAGE( [Main] " Leptonica_INCLUDE_DIRS = ${Leptonica_INCLUDE_DIRS}")
+MESSAGE( [Main] " Leptonica_LIBRARY = ${Leptonica_LIBRARY}")
+MESSAGE( [Main] " Leptonica_FOUND = ${Leptonica_FOUND}")
+
+MESSAGE( [Main] " Tesseract_INCLUDE_DIRS = ${Tesseract_INCLUDE_DIRS}")
+MESSAGE( [Main] " Tesseract_LIBRARY = ${Tesseract_LIBRARY}")
+MESSAGE( [Main] " Tesseract_FOUND = ${Tesseract_FOUND}")
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${NODE_ADDON_API_DIR})
 
