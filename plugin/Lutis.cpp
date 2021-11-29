@@ -11,6 +11,8 @@
 #include "NWebp.h"
 #include "NMagick.h"
 #include "NOpenCv.h"
+#include <tesseract/baseapi.h>
+#include <leptonica/allheaders.h>
 
 namespace lutis
 {
@@ -632,6 +634,59 @@ namespace lutis
         return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, output_webp_size);
     }
 
+    static Napi::Value OcrScan(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 1)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+         if (!info[0].IsString())
+        {
+            Napi::TypeError::New(env, "first argument should be string").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsBuffer())
+        {
+            Napi::TypeError::New(env, "second argument should be buffer").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        char* out_data;
+
+        Napi::String tessdata_path = info[0].As<Napi::String>();
+        std::string tessdata_path_str = tessdata_path.Utf8Value();
+        auto buf = info[1].As<Napi::Buffer<lutis::type::Byte>>();
+
+        lutis::ncv::NCv* ncv = lutis::ncv::NCv::FromBuffer(buf);
+        if (ncv == nullptr)
+        {
+            Napi::TypeError::New(env, "error init opencv").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        tesseract::TessBaseAPI* tess_api = new tesseract::TessBaseAPI();
+        if (tess_api->Init(tessdata_path_str.data(), "eng", tesseract::OEM_LSTM_ONLY))
+        {
+            Napi::TypeError::New(env, "error init tesseract base api").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+        tess_api->SetPageSegMode(tesseract::PSM_AUTO);
+
+        tess_api->SetImage(ncv->Mat().data, ncv->Mat().cols, ncv->Mat().rows, 3, ncv->Mat().step );
+        out_data = tess_api->GetUTF8Text();
+        
+        delete ncv;
+        delete tess_api;
+        delete[] out_data;
+
+        return Napi::String::New(env, out_data);
+    }
+
     Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         exports.Set(Napi::String::New(env, "gaussianBlur"), Napi::Function::New(env, GaussianBlur));
@@ -644,6 +699,8 @@ namespace lutis
         exports.Set(Napi::String::New(env, "randomPixelJpeg"), Napi::Function::New(env, RandomPixelJpeg));
         exports.Set(Napi::String::New(env, "grayFilterJpeg"), Napi::Function::New(env, GrayFilterJpeg));
         exports.Set(Napi::String::New(env, "jpegToWebp"), Napi::Function::New(env, JpegToWebp));
+        exports.Set(Napi::String::New(env, "ocrScan"), Napi::Function::New(env, OcrScan));
+        
         return exports;
     }
 
