@@ -10,7 +10,7 @@ build-vendor:
 	chmod +x ./scripts/imagemagick && \
 	chmod +x ./scripts/leptonica && \
 	chmod +x ./scripts/tesseract && \
-	chmod +x ./scripts/download_tessdata && \
+	chmod +x ./scripts/download_tessdata \
 	&& ./scripts/opencv \
 	&& ./scripts/zlib \
 	&& ./scripts/png \
