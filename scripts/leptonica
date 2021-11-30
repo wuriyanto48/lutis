@@ -11,7 +11,7 @@ rm -rf $leptonica_dir/*
 mkdir -p $leptonica_dir && cd $leptonica_dir
 git clone $git_url
 cd libleptonica*
-git checkout tags/$libleptonica_version
+# git checkout tags/$libleptonica_version
 
 lib_ext="so"
 
