@@ -37,6 +37,7 @@ jobs:
         run: make build
       - name: Check Build
         run: |
+          pwd
           ls build/Release/
       - name: Run example
         run: node index.js
