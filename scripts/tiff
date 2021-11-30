@@ -1,0 +1,22 @@
+#!/bin/bash
+
+libtiff_version=v4.3.0
+export CURR_DIR=$(pwd)
+tiff_dir="$CURR_DIR/vendor/tiff"
+tiff_lib_dir="$CURR_DIR/vendor/tiff/lib"
+
+git_url="https://gitlab.com/libtiff/libtiff.git libtiff-$libtiff_version"
+
+rm -rf $tiff_dir/*
+mkdir -p $tiff_dir && cd $tiff_dir
+git clone $git_url
+cd libtiff*
+git checkout tags/$libtiff_version
+
+cd build && cmake -DCMAKE_INSTALL_PREFIX=$tiff_dir \
+    -DCMAKE_BUILD_TYPE="Release" \
+    -DBUILD_SHARED_LIBS=ON  ../
+
+make
+make install
+
