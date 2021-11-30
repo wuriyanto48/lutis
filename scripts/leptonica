@@ -10,8 +10,8 @@ git_url="https://github.com/DanBloomberg/leptonica.git libleptonica-$libleptonic
 rm -rf $leptonica_dir/*
 mkdir -p $leptonica_dir && cd $leptonica_dir
 git clone $git_url
-git checkout tags/$libleptonica_version
 cd libleptonica*
+git checkout tags/$libleptonica_version
 
 lib_ext="so"
 
@@ -51,4 +51,3 @@ mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX=$leptonica_dir \
 
 make
 make install
-
