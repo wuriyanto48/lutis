@@ -3,7 +3,7 @@ const lutis = require('./lib');
 const fs = require('fs');
 const { constants } = require('buffer');
 
-let filePath = './imagedata/es.png';
+let filePath = './imagedata/go.png';
 
 // let res = lutis.randomPixelJpeg(20, 10);
 // fs.writeFile('out.jpeg', res, 'binary', (err) => {
@@ -34,7 +34,9 @@ fs.readFile(filePath, null, (err, data) => {
     } else {
         let tessdata_path = `${process.cwd()}/tessdata`;
         let res = lutis.ocrScan(tessdata_path, data);
+        console.log('--------');
         console.log(res);
+        console.log('--------');
     }
 });
 
