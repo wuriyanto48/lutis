@@ -39,6 +39,9 @@ jobs:
         run: |
           pwd
           ls build/Release/
+          
+      - name: Run example
+        run: |
           CURR_DIR=$(pwd)
           ZLIB_LIB="$CURR_DIR/vendor/zlib/lib"
           JPEG_LIB="$CURR_DIR/vendor/jpeg/lib"
@@ -48,7 +51,5 @@ jobs:
           LEPTONICA_LIB="$CURR_DIR/vendor/leptonica/lib"
           TESSERACT_LIB="$CURR_DIR/vendor/tesseract/lib"
           OPENCV_LIB="$CURR_DIR/vendor/opencv/install/lib"
-
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ZLIB_LIB:$JPEG_LIB:$PNG_LIB:$WEBP_LIB:$IMAGE_MAGICK_LIB:$LEPTONICA_LIB:$TESSERACT_LIB:$OPENCV_LIB
-      - name: Run example
-        run: node index.js
+          node index.js
