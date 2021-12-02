@@ -111,6 +111,10 @@ set(ENV{PKG_CONFIG_PATH} "$ENV{PKG_CONFIG_PATH}:${PROJECT_SOURCE_DIR}/vendor/ima
 set(ImageMagick_EXECUTABLE_DIR ${PROJECT_SOURCE_DIR}/vendor/image_magick/bin)
 set(ImageMagick_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/image_magick/include/ImageMagick-7)
 set(ImageMagick_LIBRARIES ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib)
+set(ImageMagick_Magick++_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/image_magick/include/ImageMagick-7)
+set(ImageMagick_Magick++_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib/libMagick++-7.Q16HDRI.${DYNAMIC_LIB_EXT})
+set(ImageMagick_MagickCore_INCLUDE_DIRS ${PROJECT_SOURCE_DIR}/vendor/image_magick/include/ImageMagick-7)
+set(ImageMagick_MagickCore_LIBRARY ${PROJECT_SOURCE_DIR}/vendor/image_magick/lib/libMagickCore-7.Q16HDRI.${DYNAMIC_LIB_EXT})
 
 add_definitions( -DMAGICKCORE_QUANTUM_DEPTH=16 )
 add_definitions( -DMAGICKCORE_HDRI_ENABLE=0 )
@@ -199,7 +203,7 @@ target_link_libraries(${PROJECT_NAME}
         -L${ImageMagick_LIBRARIES} 
         -L${WebP_LIBRARIES} 
         ${ZLIB_LIBRARY} 
-        JPEG::JPEG 
+        ${JPEG_LIBRARIES}
         ${PNG_LIBRARIES}
         ${Leptonica_LIBRARY}
         ${Tesseract_LIBRARY}
