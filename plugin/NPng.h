@@ -11,15 +11,16 @@
 
 namespace lutis 
 {
-    namespace npng
-    {
-        // https://gist.github.com/niw/5963798
-        // http://pulsarengine.com/2009/01/reading-png-images-from-memory/
-        class NPng
-        {
-            
-        }
-    }
-}
+namespace npng
+{
+// https://gist.github.com/niw/5963798
+// http://pulsarengine.com/2009/01/reading-png-images-from-memory/
+class NPng
+{
+    
+};
+
+} // npng
+} // lutis
 
 #endif
