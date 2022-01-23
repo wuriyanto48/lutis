@@ -7,8 +7,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  linux:
     runs-on: ubuntu-latest
 
     strategy:
@@ -16,25 +15,35 @@ jobs:
         node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: checkout resources
+        uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+
       - name: Install Yarn and Npm
         run: npm install -g npm@latest yarn@latest
+
       - name: Set permission to install_dep_ubuntu
         run: chmod +x ./scripts/install_dep_ubuntu
+
       - name: Install Ubuntu dependecies
         run: bash ./scripts/install_dep_ubuntu
+
       - name: Install cmake-js
         run: npm install -g cmake-js
+
       - name: Install Node dependencies
         run: npm install
+
       - name: Build Vendor
         run: make build-vendor
+
       - name: Build Project
         run: make build
+
       - name: Check Build
         run: |
           pwd
@@ -53,3 +62,42 @@ jobs:
           OPENCV_LIB="$CURR_DIR/vendor/opencv/install/lib"
           export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ZLIB_LIB:$JPEG_LIB:$PNG_LIB:$WEBP_LIB:$IMAGE_MAGICK_LIB:$LEPTONICA_LIB:$TESSERACT_LIB:$OPENCV_LIB
           node index.js
+  
+  macos:
+    runs-on: macOS-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - name: checkout resources
+        uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Yarn and Npm
+        run: npm install -g npm@latest yarn@latest
+
+      - name: Install cmake-js
+        run: npm install -g cmake-js
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Build Vendor
+        run: make build-vendor
+
+      - name: Build Project
+        run: make build
+
+      - name: Check Build
+        run: |
+          pwd
+          ls build/Release/
+          
+      - name: Run example
+        run: node index.js
