@@ -64,7 +64,7 @@ jobs:
           node index.js
   
   macos:
-    runs-on: macOS-latest
+    runs-on: macos-10.15
 
     strategy:
       matrix:
