@@ -21,6 +21,11 @@ An Experimental C/C++ Graphics Lib binding with `Nodejs`
 
 ### Building
 
+Install `cmake-js`
+```shell
+$ npm install --location=global cmake-js
+```
+
 Install Nodejs dependencies
 ```shell
 $ npm install
@@ -34,4 +39,9 @@ $ make build-vendor
 Build Project
 ```shell
 $ make build
+```
+
+Running on Linux
+```shell
+$ ./runlinux
 ```
