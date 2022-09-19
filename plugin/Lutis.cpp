@@ -689,6 +689,68 @@ namespace lutis
         return Napi::String::New(env, out_data);
     }
 
+    static Napi::Value GenerateJuliaSetJpeg(const Napi::CallbackInfo& info)
+    {
+        Napi::Env env = info.Env();
+
+        if (info.Length() < 2)
+        {
+            Napi::TypeError::New(env, "wrong number of argument").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsNumber())
+        {
+            Napi::TypeError::New(env, "first argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsNumber())
+        {
+            Napi::TypeError::New(env, "second argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[2].IsNumber())
+        {
+            Napi::TypeError::New(env, "third argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[3].IsNumber())
+        {
+            Napi::TypeError::New(env, "fourth argument should be number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        uint32_t image_width = info[0].As<Napi::Number>().Uint32Value();
+        uint32_t image_height = info[1].As<Napi::Number>().Uint32Value();
+        float c_real = info[2].As<Napi::Number>().FloatValue();
+        float c_imag = info[3].As<Napi::Number>().FloatValue();
+
+        lutis::type::Byte* out_data = nullptr;
+
+        uint32_t channel = 3;
+
+        lutis::njpeg::NJpeg* input = new lutis::njpeg::NJpeg(image_width, image_height, channel);
+        input->GenerateJuliaSet(c_real, c_imag);
+
+        int write_res = input->ToBuffer(J_COLOR_SPACE::JCS_RGB, &out_data);
+        if (write_res != 0)
+        {
+            delete input;
+            delete[] out_data;
+            
+            Napi::TypeError::New(env, "error writing jpeg data").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        delete input;
+        delete[] out_data;
+
+        return Napi::Buffer<lutis::type::Byte>::Copy(env, out_data, input->Length());
+    }
+
     Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         exports.Set(Napi::String::New(env, "gaussianBlur"), Napi::Function::New(env, GaussianBlur));
@@ -702,6 +764,7 @@ namespace lutis
         exports.Set(Napi::String::New(env, "grayFilterJpeg"), Napi::Function::New(env, GrayFilterJpeg));
         exports.Set(Napi::String::New(env, "jpegToWebp"), Napi::Function::New(env, JpegToWebp));
         exports.Set(Napi::String::New(env, "ocrScan"), Napi::Function::New(env, OcrScan));
+        exports.Set(Napi::String::New(env, "generateJuliaSet"), Napi::Function::New(env, GenerateJuliaSetJpeg));
         
         return exports;
     }

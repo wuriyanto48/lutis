@@ -5,6 +5,15 @@ const { constants } = require('buffer');
 
 let filePath = './imagedata/go.png';
 
+let res = lutis.generateJuliaSet(1080, 1080, -0.74543, 0.11301);
+fs.writeFile('out.jpeg', res, 'binary', (err) => {
+    if (err) {
+        console.log('error... ', err);
+    } else {
+        console.log(res);
+    }
+});
+
 // let res = lutis.randomPixelJpeg(20, 10);
 // fs.writeFile('out.jpeg', res, 'binary', (err) => {
 //     if (err) {
@@ -28,17 +37,17 @@ let filePath = './imagedata/go.png';
     
 // });
 
-fs.readFile(filePath, null, (err, data) => {
-    if (err) {
-        console.log(err);
-    } else {
-        let tessdata_path = `${process.cwd()}/tessdata`;
-        let res = lutis.ocrScan(tessdata_path, data);
-        console.log('--------');
-        console.log(res);
-        console.log('--------');
-    }
-});
+// fs.readFile(filePath, null, (err, data) => {
+//     if (err) {
+//         console.log(err);
+//     } else {
+//         let tessdata_path = `${process.cwd()}/tessdata`;
+//         let res = lutis.ocrScan(tessdata_path, data);
+//         console.log('--------');
+//         console.log(res);
+//         console.log('--------');
+//     }
+// });
 
 // fs.readFile(filePath, null, (err, data) => {
 //     if (err) {

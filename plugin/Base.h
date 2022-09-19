@@ -118,6 +118,64 @@ public:
 
         return flat_pixel;
     }
+
+    // c_real represent real number part number of the complex number
+    // c_image represent imaginary part number of the complex number
+    int GenerateJuliaSet(float c_real, float c_imag)
+    {
+        data = new lutis::type::Byte[width * height * channel];
+        const int MAX_ITER = 1000;
+        
+        float scale_x = 3.0 / width;
+        float scale_y = 3.0 / height;
+
+        float escape_radius = 3.5;
+        if (data == nullptr)
+            return -1;
+        // background
+        for (int x = 0; x != width; x++) 
+        {
+            for (int y = 0; y != height; y++)
+            {                
+                data[(y*width*channel)+(x*channel)+0] = (uint8_t) 3;
+                data[(y*width*channel)+(x*channel)+1] = (uint8_t) 248;
+                data[(y*width*channel)+(x*channel)+2] = (uint8_t) 252;
+                if (channel == 4)
+                    data[(y*width*channel)+(x*channel)+3] = (uint8_t) 0xFF;
+
+            }
+
+        }
+        // generate julia set
+        for (int x = 0; x != width; x++) 
+        {
+            for (int y = 0; y != height; y++)
+            {
+                float zx = (float) x * scale_x - 1.5;
+                float zy = (float) y * scale_y - 1.5;
+
+                int i = 0;
+
+                while ((zx*zx+zy*zy) < escape_radius && i < MAX_ITER)
+                {
+                    float x_temp = zx * zx - zy * zy;
+                    zy = 2 * zx * zy + c_imag;
+                    zx = x_temp + c_real;
+                    i = i + 1;
+                }
+                
+                data[(y*width*channel)+(x*channel)+0] = (uint8_t) i << 20;
+                data[(y*width*channel)+(x*channel)+1] = (uint8_t) i << 21;
+                data[(y*width*channel)+(x*channel)+2] = (uint8_t) i * 8;
+                if (channel == 4)
+                    data[(y*width*channel)+(x*channel)+3] = (uint8_t) 0xFF;
+
+            }
+
+        }
+
+        return 0;
+    }
 };
 
 } // base
